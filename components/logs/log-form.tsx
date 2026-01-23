@@ -76,8 +76,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
         defaultValues: {
             variant_id: defaultVariantId || "",
             rating: 5,
-            comment: "",
-            image_url: "",
+            impression: "",
         },
     })
 
