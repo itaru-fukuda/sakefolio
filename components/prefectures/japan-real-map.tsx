@@ -51,7 +51,7 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
                 className="w-full h-auto"
                 aria-label={Japan.label}
             >
-                {Japan.locations.map((location) => {
+                {Japan.locations.map((location: { id: string; name: string; path: string }) => {
                     const isHovered = hoveredLocationName === location.name
                     return (
                         <path
