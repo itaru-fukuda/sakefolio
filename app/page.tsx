@@ -1,65 +1,155 @@
-import Image from "next/image";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Search, MapPin, TrendingUp, BookOpen, ChevronRight } from "lucide-react"
+import { GlobalSearch } from "@/components/global-search"
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Editorial Hero Section */}
+      <section
+        className="relative py-24 md:py-36 bg-cover bg-center border-b border-border/50"
+        style={{ backgroundImage: "url('/images/sake_hero_bg.png')" }}
+      >
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+        <div className="container mx-auto px-4 max-w-5xl text-center relative z-10">
+          <span className="text-sm font-medium tracking-widest text-white/90 uppercase mb-4 inline-block drop-shadow-md">
+            Japanese Sake Log
+          </span>
+          <h1 className="mb-6 text-4xl font-serif font-bold text-white md:text-6xl tracking-wide leading-tight drop-shadow-lg">
+            Sakefolio
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-white/90 font-light leading-relaxed font-serif drop-shadow-md">
+            至高の一杯を、美しく記録する。<br className="hidden md:inline" />
+            日々の感動を、確かな記憶へ。
           </p>
+
+          <div className="mx-auto max-w-lg mb-12">
+            <GlobalSearch />
+          </div>
+
+          <div className="flex justify-center flex-wrap gap-4">
+            <Button asChild size="lg" className="rounded-sm px-8 font-serif font-normal bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link href="/app/logs/new">
+                <span>ログを記録する</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-sm px-8 font-serif font-normal border-foreground/20 hover:bg-accent hover:text-accent-foreground">
+              <Link href="/app/logs">
+                <span>記録一覧へ</span>
+              </Link>
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Main Content - Column Layout */}
+      <div className="flex-1 container mx-auto px-4 py-16 max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+
+          {/* Main Column - Browse & Discovery */}
+          <div className="md:col-span-8 flex flex-col gap-12">
+            <section>
+              <div className="flex items-center justify-between mb-8 border-b border-border pb-4">
+                <h2 className="text-2xl font-serif font-bold tracking-wide">探す・見つける</h2>
+                <Link href="/search" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-serif">
+                  すべて見る &rarr;
+                </Link>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-6">
+                {/* Prefecture Card */}
+                <Link href="/prefectures" className="group block h-full">
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted">
+                    {/* Abstract Pattern or Image */}
+                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(0,0,0,0.02)_25%,rgba(0,0,0,0.02)_50%,transparent_50%,transparent_75%,rgba(0,0,0,0.02)_75%,rgba(0,0,0,0.02)_100%)] bg-[length:20px_20px]"></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-transform group-hover:scale-105 duration-500">
+                      <MapPin className="h-8 w-8 mb-4 text-foreground/80" strokeWidth={1.5} />
+                      <h3 className="text-xl font-serif font-medium mb-2">産地から探す</h3>
+                      <p className="text-sm text-muted-foreground font-light">
+                        北は北海道から南は沖縄まで。<br />風土が生んだ味わいを巡る旅へ。
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* Popular Card */}
+                <Link href="/rankings" className="group block h-full">
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted">
+                    <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-transform group-hover:scale-105 duration-500">
+                      <TrendingUp className="h-8 w-8 mb-4 text-foreground/80" strokeWidth={1.5} />
+                      <h3 className="text-xl font-serif font-medium mb-2">人気ランキング</h3>
+                      <p className="text-sm text-muted-foreground font-light">
+                        今、愛されている一杯を。<br />トレンドから新しい出会いを。
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-8 border-b border-border pb-4">
+                <h2 className="text-2xl font-serif font-bold tracking-wide">新着の記録</h2>
+              </div>
+
+              <div className="grid gap-0 border-l border-border">
+                {/* Placeholder List Items */}
+                <div className="pl-6 pb-8 relative border-l border-transparent">
+                  <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-border"></div>
+                  <p className="text-sm text-muted-foreground mb-1 font-serif">2024.01.20</p>
+                  <h3 className="text-lg font-medium mb-2">No.6 X-Type <span className="text-muted-foreground font-normal text-sm ml-2">秋田県 / 新政酒造</span></h3>
+                  <p className="text-muted-foreground text-sm line-clamp-2">
+                    華やかな香りと透明感のある甘み。余韻も素晴らしく、特別な日に飲みたい一本。
+                  </p>
+                </div>
+                <div className="pl-6 pb-8 relative">
+                  <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-border"></div>
+                  <p className="text-sm text-muted-foreground mb-1 font-serif">2024.01.18</p>
+                  <h3 className="text-lg font-medium mb-2">作 雅乃智 <span className="text-muted-foreground font-normal text-sm ml-2">三重県 / 清水清三郎商店</span></h3>
+                  <p className="text-muted-foreground text-sm line-clamp-2">
+                    バランスが良く食中酒として最高。
+                  </p>
+                </div>
+                <div className="pl-6 pb-0 relative">
+                  <Link href="/app/logs" className="inline-flex items-center text-sm font-medium hover:underline font-serif">
+                    もっと見る <ChevronRight className="ml-1 h-3 w-3" />
+                  </Link>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* Sidebar Column */}
+          <div className="md:col-span-4 flex flex-col gap-8">
+            <Card className="rounded-sm border-none shadow-sm bg-muted/30">
+              <CardHeader>
+                <CardTitle className="font-serif text-lg flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" /> Sakefolioについて
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground leading-relaxed">
+                Sakefolioは、あなたの日本酒ライフを豊かにするための記録ツールです。
+                飲んだ銘柄の感想や評価を記録し、あなただけの酒蔵を築きましょう。
+              </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+              <h3 className="font-serif font-bold text-lg border-b border-border pb-2">カテゴリー</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">純米大吟醸 (12)</Link></li>
+                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">純米吟醸 (34)</Link></li>
+                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">特別純米 (8)</Link></li>
+                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">本醸造 (3)</Link></li>
+              </ul>
+            </div>
+          </div>
+
         </div>
-      </main>
+      </div>
     </div>
-  );
+  )
 }
