@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
 import { SakeRegistrationSchema } from "@/lib/validations/sake"
-import { createCustomSake } from "@/lib/actions/sake"
+import { createCustomSake, getSakeTypes } from "@/lib/actions/sake"
 
 interface SakeFormProps {
     breweries: { id: string; name: string }[]

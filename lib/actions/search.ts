@@ -72,6 +72,11 @@ export type SakeSearchResult = {
     tags: string[]
 }
 
+export type SakeSearchResponse = {
+    data: SakeSearchResult[]
+    totalCount: number
+}
+
 // ...
 
 export async function searchSakeDatabase(

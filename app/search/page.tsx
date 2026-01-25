@@ -1,5 +1,5 @@
 import { getFlavorTags } from "@/lib/actions/log"
-import { searchSakeDatabase } from "@/lib/actions/search"
+import { searchSakeDatabase, type SakeSearchResult } from "@/lib/actions/search"
 import { SakeSearchForm } from "@/components/sake/sake-search-form"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -108,7 +108,7 @@ export default async function SearchPage({
                     <div className="space-y-4">
                         {results.length > 0 ? (
                             <>
-                                {results.map((sake) => (
+                                {results.map((sake: SakeSearchResult) => (
                                     <Card key={sake.variant_id} className="hover:bg-muted/30 transition-colors">
                                         <div className="flex flex-col sm:flex-row">
                                             <div className="p-6 flex-1">
