@@ -297,7 +297,7 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
                             <FormLabel>種類・特定名称・製法 (任意)</FormLabel>
                             <div className="flex gap-2">
                                 <Select
-                                    value={availableTypes.includes(field.value) ? field.value : undefined}
+                                    value={availableTypes.includes(field.value || "") ? field.value : undefined}
                                     onValueChange={(value) => {
                                         const current = field.value || ""
                                         if (!current) {
