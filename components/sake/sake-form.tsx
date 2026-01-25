@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect } from "react"
 import { Check, ChevronsUpDown, Plus } from "lucide-react"
 import * as z from "zod"
 
@@ -59,7 +59,7 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
     const [availableTypes, setAvailableTypes] = useState<string[]>([])
 
     // Load available types on mount
-    React.useEffect(() => {
+    useEffect(() => {
         getSakeTypes().then((types) => {
             setAvailableTypes(types)
         })
