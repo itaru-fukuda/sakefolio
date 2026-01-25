@@ -311,7 +311,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     name="type"
                     render={({ field }) => {
                         // Determine if we should show custom input
-                        const isKnownType = availableTypes.includes(field.value)
+                        const isKnownType = availableTypes.includes(field.value || "")
                         // If value exists but not known, it's custom. 
                         // If value is empty, it depends on user interaction (handled by local state if needed, but let's try to derive or use a simple toggle).
                         // Actually, using a simple state for "is entering custom" is better.
