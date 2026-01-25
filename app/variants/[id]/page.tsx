@@ -184,7 +184,7 @@ export default async function VariantPage({ params }: PageProps) {
                         <CardFooter>
                             {user ? (
                                 <Button className="w-full" asChild>
-                                    <Link href={`/app/logs/new?variant_id=${variant.id}`}>
+                                    <Link href={`/logs/new?variant_id=${variant.id}`}>
                                         <PencilLine className="mr-2 h-4 w-4" />
                                         飲んだ！ (記録する)
                                     </Link>

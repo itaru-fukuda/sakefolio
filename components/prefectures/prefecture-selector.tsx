@@ -60,12 +60,12 @@ export function PrefectureSelector({ prefectures }: PrefectureSelectorProps) {
                             <h2 className="text-xl font-bold mb-4 pb-2 border-b-2 border-primary/20 inline-block text-primary">
                                 {region.name}
                             </h2>
-                            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                            <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
                                 {regionPrefectures.map((pref) => (
                                     <Link key={pref.code} href={`/prefectures/${pref.code}`}>
                                         <Card className="h-full transition-colors hover:bg-muted/50">
-                                            <CardHeader className="p-4 text-center">
-                                                <CardTitle className="text-lg">{pref.name}</CardTitle>
+                                            <CardHeader className="p-2 text-center">
+                                                <CardTitle className="text-sm">{pref.name}</CardTitle>
                                             </CardHeader>
                                         </Card>
                                     </Link>

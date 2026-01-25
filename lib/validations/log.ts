@@ -8,4 +8,5 @@ export const DrinkLogSchema = z.object({
     aroma: z.string().optional(),
     taste: z.string().optional(),
     is_public: z.boolean(),
+    type: z.string().optional(),
 })

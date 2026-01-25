@@ -56,17 +56,27 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
     const [isPending, startTransition] = useTransition()
     const [openBrewery, setOpenBrewery] = useState(false)
     const [isNewBreweryMode, setIsNewBreweryMode] = useState(false)
+    const [availableTypes, setAvailableTypes] = useState<string[]>([])
+
+    // Load available types on mount
+    React.useEffect(() => {
+        getSakeTypes().then((types) => {
+            setAvailableTypes(types)
+        })
+    }, [])
 
     // Helper to sort breweries: Common ones first? Or just alphabetical?
     // Let's rely on list order.
 
     const form = useForm<z.infer<typeof SakeRegistrationSchema>>({
-        resolver: zodResolver(SakeRegistrationSchema),
+        resolver: zodResolver(SakeRegistrationSchema) as any,
         defaultValues: {
             breweryName: "",
             prefectureCode: "",
             brandName: "",
             variantName: "",
+            type: "",
+            abv: undefined,
         },
     })
 
@@ -97,7 +107,6 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
-                {/* Headline / Description */}
                 {/* Brewery Field */}
                 {!isNewBreweryMode ? (
                     <FormField
@@ -148,9 +157,6 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
                                                             key={brewery.id}
                                                             keywords={[brewery.name]}
                                                             onSelect={(currentValue) => {
-                                                                // Use the brewery.name directly from closure to ensure case formatting is preserved,
-                                                                // or use currentValue if safe (usually lowercased by cmdk).
-                                                                // Better to use the closure 'brewery.name' as it's the real data.
                                                                 console.log("Selected:", brewery.name)
                                                                 form.setValue("breweryName", brewery.name, {
                                                                     shouldValidate: true
@@ -270,12 +276,76 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
                     name="variantName"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>種類・特定名称・商品名</FormLabel>
+                            <FormLabel>商品名</FormLabel>
                             <FormControl>
-                                <Input placeholder="例：X-type, 純米吟醸, Black Label" {...field} />
+                                <Input placeholder="例：X-type, Black Label" {...field} />
                             </FormControl>
                             <FormDescription>
-                                具体的な商品名や特定名称を入力してください。
+                                具体的な商品名を入力してください。商品名がない場合は「標準」などでOKです。
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Type/Method (Presets + Input) */}
+                <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>種類・特定名称・製法 (任意)</FormLabel>
+                            <div className="flex gap-2">
+                                <Select
+                                    value={availableTypes.includes(field.value) ? field.value : undefined}
+                                    onValueChange={(value) => {
+                                        const current = field.value || ""
+                                        if (!current) {
+                                            field.onChange(value)
+                                        } else if (!current.includes(value)) {
+                                            field.onChange(`${current} ${value}`)
+                                        }
+                                        // If already included, do nothing or maybe toggle?
+                                        // For now just append if missing.
+                                    }}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger className="w-[160px]">
+                                            <SelectValue placeholder="定型リスト" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {availableTypes.map((t) => (
+                                            <SelectItem key={t} value={t}>
+                                                {t}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormControl>
+                                    <Input placeholder="純米吟醸、生酒など" className="flex-1" {...field} />
+                                </FormControl>
+                            </div>
+                            <FormDescription>
+                                リストから選ぶか、自由に直接入力・編集できます（複数入力可）。
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* ABV (Optional) */}
+                <FormField
+                    control={form.control}
+                    name="abv"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>アルコール度数 (%) (任意)</FormLabel>
+                            <FormControl>
+                                <Input type="number" step="0.1" placeholder="例：15" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                分かる場合はパーセントで入力してください。
                             </FormDescription>
                             <FormMessage />
                         </FormItem>

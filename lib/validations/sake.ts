@@ -16,9 +16,13 @@ export const SakeRegistrationSchema = z.object({
         .max(50, { message: "銘柄名は50文字以内で入力してください。" }),
     variantName: z
         .string()
-        .min(1, { message: "種類・特定名称は必須です。" })
-        .max(50, { message: "種類名は50文字以内で入力してください。" }),
-    // Optional: Specific variant details if we want to expand later (abv, polishing ratio etc)
+        .min(1, { message: "商品名は必須です。" })
+        .max(50, { message: "商品名は50文字以内で入力してください。" }),
+    type: z
+        .string()
+        .max(50, { message: "種類・製法は50文字以内で入力してください。" })
+        .optional(),
+    abv: z.coerce.number().min(0).max(100).optional(),
 })
     .refine((data) => {
         // Ideally we want to say: If breweryName is NEW (not in list), then prefectureCode is required.

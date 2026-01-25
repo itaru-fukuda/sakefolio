@@ -5,7 +5,47 @@ import { SakeRegistrationSchema } from "@/lib/validations/sake"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
-export async function createCustomSake(values: z.infer<typeof SakeRegistrationSchema>) {
+export async function getSakeTypes() {
+    const supabase = await createClient()
+    const { data } = await supabase
+        .from("sake_types")
+        .select("name")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true })
+    // Return string array for easier consumption
+    return data?.map((d) => d.name) || []
+}
+
+export async function syncSakeTypes(typeString?: string | null) {
+    if (!typeString) return
+
+    // split by space (full-width or half-width)
+    const tokens = typeString.split(/[\s　]+/).filter(Boolean)
+    if (tokens.length === 0) return
+
+    const supabase = await createClient()
+
+    // We want to insert ignore.
+    // Supabase JS doesn't support "insert ignore" easily for batch in one go without UPSERT with ON CONFLICT.
+    // But 'name' is unique.
+
+    // Attempt to insert all, ignoring conflicts.
+    const { error } = await supabase
+        .from("sake_types")
+        .upsert(
+            tokens.map((t) => ({ name: t })),
+            { onConflict: "name", ignoreDuplicates: true }
+        )
+
+    if (error) {
+        console.error("Failed to sync sake types:", error)
+        // Don't block the main action though
+    }
+}
+
+export async function createCustomSake(
+    data: z.infer<typeof SakeRegistrationSchema>
+) {
     const supabase = await createClient()
 
     // 1. Auth Check
@@ -18,13 +58,23 @@ export async function createCustomSake(values: z.infer<typeof SakeRegistrationSc
     }
 
     // 2. Validate Inputs
-    const validatedFields = SakeRegistrationSchema.safeParse(values)
+    const validatedFields = SakeRegistrationSchema.safeParse(data)
 
     if (!validatedFields.success) {
         return { error: "入力内容に誤りがあります。" }
     }
 
-    const { breweryName, prefectureCode, brandName, variantName } = validatedFields.data
+    const {
+        breweryName,
+        prefectureCode,
+        brandName,
+        variantName,
+        type,
+        abv
+    } = validatedFields.data
+
+    // Sync types asynchronously? Or await? Await is safer to ensure it exists for next time.
+    await syncSakeTypes(type)
 
     try {
         // 3. Brewery Logic
@@ -112,6 +162,8 @@ export async function createCustomSake(values: z.infer<typeof SakeRegistrationSc
                 .insert({
                     name: variantName,
                     brand_id: brandId,
+                    type: validatedFields.data.type,
+                    abv: validatedFields.data.abv,
                     is_active: true
                 })
                 .select("id")
@@ -124,7 +176,7 @@ export async function createCustomSake(values: z.infer<typeof SakeRegistrationSc
             variantId = newVariant.id
         }
 
-        revalidatePath("/app/logs/new") // Revalidate to refresh lists if they are fetched server-side
+        revalidatePath("/logs/new") // Revalidate to refresh lists if they are fetched server-side
         return { success: true, variantId: variantId }
 
     } catch (error) {

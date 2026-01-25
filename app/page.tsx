@@ -32,12 +32,12 @@ export default function Home() {
 
           <div className="flex justify-center flex-wrap gap-4">
             <Button asChild size="lg" className="rounded-sm px-8 font-serif font-normal bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link href="/app/logs/new">
+              <Link href="/logs/new">
                 <span>ログを記録する</span>
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-sm px-8 font-serif font-normal border-foreground/20 hover:bg-accent hover:text-accent-foreground">
-              <Link href="/app/logs">
+              <Link href="/logs">
                 <span>記録一覧へ</span>
               </Link>
             </Button>
@@ -75,50 +75,19 @@ export default function Home() {
                   </div>
                 </Link>
 
-                {/* Popular Card */}
-                <Link href="/rankings" className="group block h-full">
+                {/* Search Card (Replaced Rankings) */}
+                <Link href="/logs/search" className="group block h-full">
                   <div className="relative h-64 overflow-hidden rounded-sm bg-muted">
                     <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-transform group-hover:scale-105 duration-500">
-                      <TrendingUp className="h-8 w-8 mb-4 text-foreground/80" strokeWidth={1.5} />
-                      <h3 className="text-xl font-serif font-medium mb-2">人気ランキング</h3>
+                      <Search className="h-8 w-8 mb-4 text-foreground/80" strokeWidth={1.5} />
+                      <h3 className="text-xl font-serif font-medium mb-2">詳細検索</h3>
                       <p className="text-sm text-muted-foreground font-light">
-                        今、愛されている一杯を。<br />トレンドから新しい出会いを。
+                        味や度数、キーワードで記録を検索。<br />あの日の感動を呼び覚ます。
                       </p>
                     </div>
                   </div>
                 </Link>
-              </div>
-            </section>
-
-            <section>
-              <div className="flex items-center justify-between mb-8 border-b border-border pb-4">
-                <h2 className="text-2xl font-serif font-bold tracking-wide">新着の記録</h2>
-              </div>
-
-              <div className="grid gap-0 border-l border-border">
-                {/* Placeholder List Items */}
-                <div className="pl-6 pb-8 relative border-l border-transparent">
-                  <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-border"></div>
-                  <p className="text-sm text-muted-foreground mb-1 font-serif">2024.01.20</p>
-                  <h3 className="text-lg font-medium mb-2">No.6 X-Type <span className="text-muted-foreground font-normal text-sm ml-2">秋田県 / 新政酒造</span></h3>
-                  <p className="text-muted-foreground text-sm line-clamp-2">
-                    華やかな香りと透明感のある甘み。余韻も素晴らしく、特別な日に飲みたい一本。
-                  </p>
-                </div>
-                <div className="pl-6 pb-8 relative">
-                  <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-border"></div>
-                  <p className="text-sm text-muted-foreground mb-1 font-serif">2024.01.18</p>
-                  <h3 className="text-lg font-medium mb-2">作 雅乃智 <span className="text-muted-foreground font-normal text-sm ml-2">三重県 / 清水清三郎商店</span></h3>
-                  <p className="text-muted-foreground text-sm line-clamp-2">
-                    バランスが良く食中酒として最高。
-                  </p>
-                </div>
-                <div className="pl-6 pb-0 relative">
-                  <Link href="/app/logs" className="inline-flex items-center text-sm font-medium hover:underline font-serif">
-                    もっと見る <ChevronRight className="ml-1 h-3 w-3" />
-                  </Link>
-                </div>
               </div>
             </section>
           </div>
@@ -136,16 +105,6 @@ export default function Home() {
                 飲んだ銘柄の感想や評価を記録し、あなただけの酒蔵を築きましょう。
               </CardContent>
             </Card>
-
-            <div className="space-y-4">
-              <h3 className="font-serif font-bold text-lg border-b border-border pb-2">カテゴリー</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">純米大吟醸 (12)</Link></li>
-                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">純米吟醸 (34)</Link></li>
-                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">特別純米 (8)</Link></li>
-                <li><Link href="#" className="block py-1 text-muted-foreground hover:text-foreground transition-colors">本醸造 (3)</Link></li>
-              </ul>
-            </div>
           </div>
 
         </div>

@@ -55,18 +55,21 @@ export function UserNav({ user, profile }: UserNavProps) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => router.push("/")}>
+                        トップページ
+                    </DropdownMenuItem>
                     {profile?.role === "admin" && (
-                        <DropdownMenuItem onClick={() => router.push("/app/admin")}>
+                        <DropdownMenuItem onClick={() => router.push("/admin")}>
                             管理画面
                         </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem onClick={() => router.push("/app")}>
+                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>
                         マイページ
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push("/app/logs")}>
+                    <DropdownMenuItem onClick={() => router.push("/logs")}>
                         飲酒ログ一覧
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push("/app/logs/new")}>
+                    <DropdownMenuItem onClick={() => router.push("/logs/new")}>
                         新しいログを記録
                     </DropdownMenuItem>
                 </DropdownMenuGroup>

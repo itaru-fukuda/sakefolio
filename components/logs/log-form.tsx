@@ -52,11 +52,13 @@ import { useRouter } from "next/navigation"
 import { DrinkLogSchema } from "@/lib/validations/log"
 import { createLog } from "@/lib/actions/log"
 import type { z } from "zod"
+import { getSakeTypes } from "@/lib/actions/sake"
 
 interface LogFormProps {
     variants: {
         id: string
         name: string
+        type?: string | null
         brand_id?: string
         brand: {
             name: string
@@ -71,22 +73,30 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
     const [openVariantCombobox, setOpenVariantCombobox] = React.useState(false)
     const router = useRouter()
 
+    const [availableTypes, setAvailableTypes] = React.useState<string[]>([])
+    const [isCustomType, setIsCustomType] = React.useState(false)
+
+    // Load available types on mount
+    React.useEffect(() => {
+        getSakeTypes().then((types) => {
+            setAvailableTypes(types)
+        })
+    }, [])
+
     const form = useForm<z.infer<typeof DrinkLogSchema>>({
         resolver: zodResolver(DrinkLogSchema) as any,
         defaultValues: {
             variant_id: defaultVariantId || "",
             rating: 5,
             impression: "",
+            is_public: false,
+            type: "",
         },
     })
 
     // Derived State: Unique Brands
     const brands = React.useMemo(() => {
-        const uniqueBrands = new Map<string, string>(); // brand_id -> brand_name
-        // Also map name -> id if brand_id is missing? 
-        // We ensure brand_id is fetched now.
-        // But for deduplication, we use brand_id if available, or name.
-        // Actually, we need an ID to filter. Assuming brand_id is available.
+        const uniqueBrands = new Map<string, string>();
         variants.forEach(v => {
             if (v.brand_id) {
                 uniqueBrands.set(v.brand_id, v.brand.name)
@@ -95,10 +105,8 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
         return Array.from(uniqueBrands.entries()).map(([id, name]) => ({ id, name }))
     }, [variants])
 
-    // State for selected Brand (independent of form logic, but helps UI)
     const [selectedBrandId, setSelectedBrandId] = React.useState<string | null>(null)
 
-    // Effect: If defaultVariantId is provided, set selectedBrandId
     React.useEffect(() => {
         if (defaultVariantId) {
             const variant = variants.find(v => v.id === defaultVariantId)
@@ -108,11 +116,19 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
         }
     }, [defaultVariantId, variants])
 
-    // Filtered Variants based on selected Brand
     const filteredVariants = React.useMemo(() => {
         if (!selectedBrandId) return []
         return variants.filter(v => v.brand_id === selectedBrandId)
     }, [selectedBrandId, variants])
+
+    const selectedVariant = variants.find(v => v.id === form.watch("variant_id"))
+
+    React.useEffect(() => {
+        if (selectedVariant) {
+            form.setValue("type", selectedVariant.type || "")
+            setIsCustomType(false)
+        }
+    }, [selectedVariant?.id, form])
 
     function onSubmit(values: z.infer<typeof DrinkLogSchema>) {
         startTransition(async () => {
@@ -164,21 +180,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                                         <SakeRegistrationDialog
                                             onSuccess={(id) => {
                                                 router.refresh()
-                                                // When registered, we get a variant_id.
-                                                // We need to find its brand_id to set state.
-                                                // Since variants prop might not update immediately for client logic without refresh logic...
-                                                // router.refresh updates RSC payload, but 'variants' prop update depends on parent re-render.
-                                                // Ideally NewLogPage re-renders.
-                                                // For now, let's just assume we refresh and user selects it? 
-                                                // Or better: The page reloads due to router.refresh?
-                                                // Actually router.refresh is soft.
-                                                // Let's set the form value directly to variant_id?
                                                 form.setValue("variant_id", id, { shouldValidate: true })
-
-                                                // We can't easily auto-select the brand without knowing the new relation unless we fetch it.
-                                                // But form value is what matters for submission.
-                                                // However, UI state (selectedBrandId) matters for the second dropdown.
-                                                // Let's rely on backend refresh or simple message.
                                                 setOpenBrandCombobox(false)
                                             }}
                                         />
@@ -191,7 +193,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                                                 keywords={[brand.name]}
                                                 onSelect={() => {
                                                     setSelectedBrandId(brand.id)
-                                                    form.setValue("variant_id", "") // Reset variant when brand changes
+                                                    form.setValue("variant_id", "")
                                                     setOpenBrandCombobox(false)
                                                 }}
                                             >
@@ -222,7 +224,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     name="variant_id"
                     render={({ field }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>種類・特定名称</FormLabel>
+                            <FormLabel>商品名</FormLabel>
                             <Popover open={openVariantCombobox} onOpenChange={setOpenVariantCombobox} modal={true}>
                                 <PopoverTrigger asChild>
                                     <FormControl>
@@ -240,7 +242,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                                                 ? filteredVariants.find(
                                                     (variant) => variant.id === field.value
                                                 )?.name
-                                                : "種類を選択"}
+                                                : "商品名を選択"}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                         </Button>
                                     </FormControl>
@@ -252,10 +254,14 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                                             return 0
                                         }}
                                     >
-                                        <CommandInput placeholder="種類を検索..." />
+                                        <CommandInput placeholder="商品名を検索..." />
                                         <CommandList>
                                             <CommandEmpty className="py-2 text-center text-sm">
-                                                種類が見つかりません
+                                                <p className="mb-2">見つかりません</p>
+                                                {/* Allow opening registration dialog from here too for new variants of same brand? 
+                                                    SakeRegistrationDialog supports pre-filling? Not yet. 
+                                                    For now just text.
+                                                */}
                                             </CommandEmpty>
                                             <CommandGroup>
                                                 {filteredVariants.map((variant) => (
@@ -276,17 +282,100 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                                                                     : "opacity-0"
                                                             )}
                                                         />
-                                                        {variant.name}
+                                                        <div className="flex flex-col">
+                                                            <span>{variant.name}</span>
+                                                            {(variant.type) && (
+                                                                <span className="text-xs text-muted-foreground">
+                                                                    {variant.type}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </CommandItem>
                                                 ))}
                                             </CommandGroup>
                                         </CommandList>
                                     </Command>
                                 </PopoverContent>
+
                             </Popover>
+                            <FormDescription>
+                                該当する商品名がない場合は、銘柄選択に戻って「新規登録」を行ってください。
+                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => {
+                        // Determine if we should show custom input
+                        const isKnownType = availableTypes.includes(field.value)
+                        // If value exists but not known, it's custom. 
+                        // If value is empty, it depends on user interaction (handled by local state if needed, but let's try to derive or use a simple toggle).
+                        // Actually, using a simple state for "is entering custom" is better.
+
+                        // Select value logic:
+                        // 1. If explicitly in custom mode ("Other" selected) OR value is present but not in list -> "OTHER"
+                        // 2. If valid known type -> field.value
+                        // 3. Else (empty/initial) -> undefined (Placeholder)
+                        const selectValue = (isCustomType || (!!field.value && !isKnownType))
+                            ? "OTHER"
+                            : (isKnownType ? field.value : undefined)
+
+                        return (
+                            <FormItem>
+                                <FormLabel>種類・製法</FormLabel>
+                                <div className="flex gap-2">
+                                    <Select
+                                        value={selectValue}
+                                        onValueChange={(value) => {
+                                            if (value === "OTHER") {
+                                                setIsCustomType(true)
+                                            } else {
+                                                field.onChange(value)
+                                                setIsCustomType(false)
+                                            }
+                                        }}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger className="w-[160px]">
+                                                <SelectValue placeholder="種類を選択" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {availableTypes.map((t) => (
+                                                <SelectItem key={t} value={t}>
+                                                    {t}
+                                                </SelectItem>
+                                            ))}
+                                            <SelectItem value="OTHER">その他</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    {/* Show Input if "OTHER" is selected or value is unknown (custom) */}
+                                    {(isCustomType || (!isKnownType && !!field.value)) && (
+                                        <FormControl>
+                                            <Input
+                                                placeholder="種類を入力"
+                                                className="flex-1"
+                                                {...field}
+                                                onChange={(e) => {
+                                                    field.onChange(e)
+                                                    setIsCustomType(true) // Ensure we stay in custom mode
+                                                }}
+                                            />
+                                        </FormControl>
+                                    )}
+                                </div>
+                                <FormDescription>
+                                    リストにない場合は「その他」を選んで入力してください。
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )
+                    }}
                 />
 
                 <FormField
@@ -404,31 +493,10 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     />
                 </div>
 
-                <FormField
-                    control={form.control}
-                    name="is_public"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                                <FormLabel className="text-base">公開する</FormLabel>
-                                <FormDescription>
-                                    このログを他のユーザーにも見えるようにしますか？
-                                </FormDescription>
-                            </div>
-                            <FormControl>
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
-
                 <Button type="submit" disabled={isPending}>
                     {isPending ? "保存中..." : "保存する"}
                 </Button>
             </form>
-        </Form>
+        </Form >
     )
 }

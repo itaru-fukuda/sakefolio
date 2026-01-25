@@ -234,9 +234,10 @@ export async function syncSakenowaData() {
         }
 
         // 6. Auto-create default variants
+        // 6. Auto-create default variants
         const { data: syncedBrands } = await supabaseAdmin
             .from("brands")
-            .select("id")
+            .select("id, sakenowa_id") // Fetch sakenowa_id too for flavor mapping
             .not("sakenowa_id", "is", null)
 
         if (syncedBrands && syncedBrands.length > 0) {
@@ -261,10 +262,67 @@ export async function syncSakenowaData() {
             }
         }
 
-        revalidatePath("/app/admin")
+        // 7. Sync Flavor Tags
+        const tagsRes = await fetch(`${SAKENOWA_API_BASE}/flavor-tags`)
+        if (tagsRes.ok) {
+            const tagsBody = await tagsRes.json()
+            const sakenowaTags = Array.isArray(tagsBody) ? tagsBody : (tagsBody as any).tags || []
+
+            // Upsert Tags
+            const tagBatch = sakenowaTags.map((t: any) => ({
+                id: t.id,
+                tag: t.tag
+            }))
+
+            if (tagBatch.length > 0) {
+                await supabaseAdmin.from("sakenowa_flavor_tags").upsert(tagBatch)
+            }
+
+            // 8. Sync Brand Flavor Tags
+            const brandTagsRes = await fetch(`${SAKENOWA_API_BASE}/brand-flavor-tags`)
+            if (brandTagsRes.ok) {
+                const brandTagsBody = await brandTagsRes.json()
+                const sakenowaBrandTags = Array.isArray(brandTagsBody) ? brandTagsBody : (brandTagsBody as any).flavorTags || []
+
+                // Map Sakenowa Brand ID -> Our Brand UUID
+                const sakenowaIdToUuid = new Map<number, string>()
+                syncedBrands?.forEach(b => {
+                    if (b.sakenowa_id) sakenowaIdToUuid.set(b.sakenowa_id, b.id)
+                })
+
+                const brandTagLinks = []
+                for (const bt of sakenowaBrandTags) {
+                    const brandUuid = sakenowaIdToUuid.get(bt.brandId)
+                    if (brandUuid && Array.isArray(bt.tagIds)) {
+                        for (const tagId of bt.tagIds) {
+                            brandTagLinks.push({
+                                brand_id: brandUuid,
+                                sakenowa_tag_id: tagId
+                            })
+                        }
+                    }
+                }
+
+                // Batch Insert Links (Delete all and re-insert? Or upsert? Links are simple PK)
+                // To avoid accumulation of stale tags, ideally we delete for synced brands then insert.
+                // But for now, simple upsert/ignore.
+                // Using upsert with ignoreDuplicates might fail if we want to delete old ones.
+                // Let's just UPSERT on PK.
+                for (let i = 0; i < brandTagLinks.length; i += 1000) {
+                    const batch = brandTagLinks.slice(i, i + 1000)
+                    const { error } = await supabaseAdmin
+                        .from("sakenowa_brand_flavor_tags")
+                        .upsert(batch, { onConflict: "brand_id, sakenowa_tag_id" })
+
+                    if (error) console.error("Brand Tag Link Error", error)
+                }
+            }
+        }
+
+        revalidatePath("/admin")
         return {
             success: true,
-            message: `同期完了: 酒蔵 ${addedBreweries}件, 銘柄 ${addedBrands}件 (スキップ ${skippedBrands}件)`
+            message: `同期完了: 酒蔵 ${addedBreweries}件, 銘柄 ${addedBrands}件`
         }
 
     } catch (error: any) {
