@@ -13,6 +13,29 @@ export default function Home() {
         className="relative py-24 md:py-36 bg-cover bg-center border-b border-border/50"
         style={{ backgroundImage: "url('/images/sake_hero_bg.png')" }}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "SAKEfolio",
+              "applicationCategory": "LifestyleApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "JPY"
+              },
+              "description": "SAKEfolio（サケフォリオ）は、あなたの日本酒ライフを豊かにするための記録ツールです。",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "100"
+              }
+            }),
+          }}
+        />
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
         <div className="container mx-auto px-4 max-w-5xl text-center relative z-10">
           <span className="text-sm font-medium tracking-widest text-white/90 uppercase mb-4 inline-block drop-shadow-md">

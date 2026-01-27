@@ -15,8 +15,40 @@ const notoSerifJP = Noto_Serif_JP({
 });
 
 export const metadata: Metadata = {
-  title: "SAKEfolio - 日本酒記録・評価アプリ",
-  description: "日本酒の飲酒記録、評価、プロ評価との比較ができるアプリケーション",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sakefolio.vercel.app"),
+  title: {
+    default: "SAKEfolio - 日本酒記録・評価アプリ",
+    template: "%s | SAKEfolio",
+  },
+  description: "SAKEfolio（サケフォリオ）は、あなたの日本酒ライフを豊かにするための記録ツールです。飲んだ銘柄の感想や評価を記録し、あなただけの日本酒ポートフォリオを作成しましょう。",
+  keywords: ["日本酒", "日本酒アプリ", "日本酒記録", "SAKEfolio", "日本酒評価", "日本酒データベース", "純米大吟醸", "酒蔵検索"],
+  authors: [{ name: "SAKEfolio Team" }],
+  creator: "SAKEfolio Team",
+  openGraph: {
+    type: "website",
+    locale: "ja_JP",
+    url: "/",
+    title: "SAKEfolio - 日本酒記録・評価アプリ",
+    description: "SAKEfolioで、至高の一杯を、美しく記録する。日々の感動を、確かな記憶へ。",
+    siteName: "SAKEfolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SAKEfolio - 日本酒記録・評価アプリ",
+    description: "あなたの日本酒ライフを豊かにするための記録ツール。",
+    creator: "@sakefolio",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
