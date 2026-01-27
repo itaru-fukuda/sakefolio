@@ -63,6 +63,20 @@ export function MobileNav() {
                             都道府県から探す
                         </Link>
                         <Link
+                            href="/breweries"
+                            onClick={() => setOpen(false)}
+                            className="text-foreground/70 transition-colors hover:text-foreground"
+                        >
+                            酒造から探す
+                        </Link>
+                        <Link
+                            href="/wishlist"
+                            onClick={() => setOpen(false)}
+                            className="text-foreground/70 transition-colors hover:text-foreground"
+                        >
+                            飲みたいリスト
+                        </Link>
+                        <Link
                             href="/logs/search"
                             onClick={() => setOpen(false)}
                             className="text-foreground/70 transition-colors hover:text-foreground"

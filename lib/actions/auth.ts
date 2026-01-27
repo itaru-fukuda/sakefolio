@@ -20,7 +20,7 @@ export async function login(formData: z.infer<typeof LoginSchema>) {
     }
 
     revalidatePath("/", "layout")
-    redirect("/app")
+    redirect("/")
 }
 
 export async function signup(formData: z.infer<typeof SignupSchema>) {
@@ -41,5 +41,5 @@ export async function signup(formData: z.infer<typeof SignupSchema>) {
     }
 
     revalidatePath("/", "layout")
-    redirect("/app?signup=success")
+    redirect("/?signup=success")
 }

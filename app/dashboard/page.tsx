@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { format } from "date-fns"
 import { LogOut, Plus, Search, Book, User as UserIcon } from "lucide-react"
+import { ProfileEditDialog } from "@/components/profile/profile-edit-dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default async function DashboardPage() {
     const supabase = await createClient()
@@ -34,11 +36,17 @@ export default async function DashboardPage() {
             <div className="grid md:grid-cols-3 gap-6 mb-10">
                 <Card className="md:col-span-1">
                     <CardHeader className="text-center">
-                        <div className="mx-auto bg-muted h-20 w-20 rounded-full flex items-center justify-center mb-4">
-                            <UserIcon className="h-10 w-10 text-muted-foreground" />
+                        <div className="mx-auto h-24 w-24 mb-4">
+                            <Avatar className="h-24 w-24">
+                                <AvatarImage src={profile?.avatar_url || undefined} className="object-cover" />
+                                <AvatarFallback className="text-2xl">
+                                    {profile?.display_name?.slice(0, 1) || user.email?.slice(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
-                        <CardTitle>{profile?.display_name || "名無しさん"}</CardTitle>
-                        <CardDescription>{user.email}</CardDescription>
+                        <CardTitle className="mb-1">{profile?.display_name || "名無しさん"}</CardTitle>
+                        <CardDescription className="mb-4">{user.email}</CardDescription>
+                        <ProfileEditDialog profile={profile || { display_name: null, avatar_url: null }} />
                     </CardHeader>
                     <CardContent className="text-center">
                         <div className="text-2xl font-bold">{logCount || 0}</div>

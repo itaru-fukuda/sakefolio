@@ -260,7 +260,7 @@ export function SakeForm({ breweries, prefectures, onSuccess, onCancel }: SakeFo
                         <FormItem>
                             <FormLabel>銘柄名</FormLabel>
                             <FormControl>
-                                <Input placeholder="例：No.6" {...field} />
+                                <Input placeholder="例：新政" {...field} />
                             </FormControl>
                             <FormDescription>
                                 ラベルに大きく書かれている名前です。

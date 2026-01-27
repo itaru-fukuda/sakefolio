@@ -22,7 +22,7 @@ import { User } from "@supabase/supabase-js"
 
 interface UserNavProps {
     user: User
-    profile: { role: string | null; display_name: string | null } | null
+    profile: { role: string | null; display_name: string | null; avatar_url: string | null } | null
 }
 
 export function UserNav({ user, profile }: UserNavProps) {
@@ -37,10 +37,10 @@ export function UserNav({ user, profile }: UserNavProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full cursor-pointer">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
-                        <AvatarFallback>{user.email?.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={profile?.avatar_url || user.user_metadata?.avatar_url} alt={user.email || ""} className="object-cover" />
+                        <AvatarFallback>{profile?.display_name?.slice(0, 1) || user.email?.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>

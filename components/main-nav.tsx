@@ -26,6 +26,18 @@ export function MainNav({
                 都道府県
             </Link>
             <Link
+                href="/breweries"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+                酒造
+            </Link>
+            <Link
+                href="/wishlist"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+                飲みたいリスト
+            </Link>
+            <Link
                 href="/logs/search"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >

@@ -143,9 +143,22 @@ export function SakeSearchForm({ availableTags }: SakeSearchFormProps) {
                             </FormDescription>
                         </div>
 
-                        <Button type="submit" className="w-full" size="lg">
-                            検索する
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => {
+                                    form.reset({ query: "", tagIds: [] })
+                                    router.push("/search") // Optional: immediately clear results
+                                }}
+                            >
+                                条件をクリア
+                            </Button>
+                            <Button type="submit" className="flex-1" size="lg">
+                                検索する
+                            </Button>
+                        </div>
                     </form>
                 </Form>
             </CardContent>

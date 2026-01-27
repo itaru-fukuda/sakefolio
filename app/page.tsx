@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Search, MapPin, TrendingUp, BookOpen, ChevronRight } from "lucide-react"
+import { Search, MapPin, TrendingUp, BookOpen, ChevronRight, Building2 } from "lucide-react"
 import { GlobalSearch } from "@/components/global-search"
 
 export default function Home() {
@@ -59,31 +59,47 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Prefecture Card */}
                 <Link href="/prefectures" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted">
-                    {/* Abstract Pattern or Image */}
-                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(0,0,0,0.02)_25%,rgba(0,0,0,0.02)_50%,transparent_50%,transparent_75%,rgba(0,0,0,0.02)_75%,rgba(0,0,0,0.02)_100%)] bg-[length:20px_20px]"></div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-transform group-hover:scale-105 duration-500">
-                      <MapPin className="h-8 w-8 mb-4 text-foreground/80" strokeWidth={1.5} />
-                      <h3 className="text-xl font-serif font-medium mb-2">産地から探す</h3>
-                      <p className="text-sm text-muted-foreground font-light">
-                        北は北海道から南は沖縄まで。<br />風土が生んだ味わいを巡る旅へ。
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-shadow">
+                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_region.png')" }}></div>
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
+                      <MapPin className="h-8 w-8 mb-4 text-white/90 drop-shadow-md" strokeWidth={1.5} />
+                      <h3 className="text-xl font-serif font-medium mb-2 text-white drop-shadow-md">産地から探す</h3>
+                      <p className="text-sm text-white/80 font-light drop-shadow-sm">
+                        日本各地、風土の味わいを<br />巡る旅へ。
                       </p>
                     </div>
                   </div>
                 </Link>
 
-                {/* Search Card (Replaced Rankings) */}
+                {/* Brewery Card */}
+                <Link href="/breweries" className="group block h-full">
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-shadow">
+                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_brewery.png')" }}></div>
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
+                      <Building2 className="h-8 w-8 mb-4 text-white/90 drop-shadow-md" strokeWidth={1.5} />
+                      <h3 className="text-xl font-serif font-medium mb-2 text-white drop-shadow-md">酒造から探す</h3>
+                      <p className="text-sm text-white/80 font-light drop-shadow-sm">
+                        老舗から新鋭まで、<br />作り手の想いを。
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* Search Card */}
                 <Link href="/logs/search" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted">
-                    <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-transform group-hover:scale-105 duration-500">
-                      <Search className="h-8 w-8 mb-4 text-foreground/80" strokeWidth={1.5} />
-                      <h3 className="text-xl font-serif font-medium mb-2">詳細検索</h3>
-                      <p className="text-sm text-muted-foreground font-light">
-                        味や度数、キーワードで記録を検索。<br />あの日の感動を呼び覚ます。
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-shadow">
+                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_search.png')" }}></div>
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
+                      <Search className="h-8 w-8 mb-4 text-white/90 drop-shadow-md" strokeWidth={1.5} />
+                      <h3 className="text-xl font-serif font-medium mb-2 text-white drop-shadow-md">詳細検索</h3>
+                      <p className="text-sm text-white/80 font-light drop-shadow-sm">
+                        味やキーワードで検索し、  <br />まだ見ぬ出会いへ。
                       </p>
                     </div>
                   </div>
@@ -101,8 +117,8 @@ export default function Home() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground leading-relaxed">
-                SAKEfolioは、あなたの日本酒ライフを豊かにするための記録ツールです。
-                飲んだ銘柄の感想や評価を記録し、あなただけの酒蔵を築きましょう。
+                SAKEfolio(サケフォリオ)は、あなたの日本酒ライフを豊かにするための記録ツールです。<br></br>
+                飲んだ銘柄の感想や評価を記録し、あなただけの日本酒ポートフォリオを作成しましょう。
               </CardContent>
             </Card>
           </div>

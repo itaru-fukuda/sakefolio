@@ -15,7 +15,7 @@ export async function SiteHeader() {
     if (user) {
         const { data } = await supabase
             .from("profiles")
-            .select("role, display_name")
+            .select("role, display_name, avatar_url")
             .eq("user_id", user.id)
             .single()
         profile = data
