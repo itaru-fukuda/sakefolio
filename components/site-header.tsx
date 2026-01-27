@@ -27,7 +27,7 @@ export async function SiteHeader() {
                 <MobileNav />
                 <Link href="/" className="mr-6 flex items-center space-x-2">
                     <span className="font-bold inline-block">
-                        Sakefolio
+                        SAKEfolio
                     </span>
                 </Link>
                 <div className="mr-4 hidden md:flex">

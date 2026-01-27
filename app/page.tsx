@@ -19,7 +19,7 @@ export default function Home() {
             Japanese Sake Log
           </span>
           <h1 className="mb-6 text-4xl font-serif font-bold text-white md:text-6xl tracking-wide leading-tight drop-shadow-lg">
-            Sakefolio
+            SAKEfolio
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-white/90 font-light leading-relaxed font-serif drop-shadow-md">
             至高の一杯を、美しく記録する。<br className="hidden md:inline" />
@@ -97,11 +97,11 @@ export default function Home() {
             <Card className="rounded-sm border-none shadow-sm bg-muted/30">
               <CardHeader>
                 <CardTitle className="font-serif text-lg flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" /> Sakefolioについて
+                  <BookOpen className="h-4 w-4" /> SAKEfolioについて
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground leading-relaxed">
-                Sakefolioは、あなたの日本酒ライフを豊かにするための記録ツールです。
+                SAKEfolioは、あなたの日本酒ライフを豊かにするための記録ツールです。
                 飲んだ銘柄の感想や評価を記録し、あなただけの酒蔵を築きましょう。
               </CardContent>
             </Card>

@@ -25,6 +25,12 @@ export function MainNav({
             >
                 都道府県
             </Link>
+            <Link
+                href="/logs/search"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+                詳細検索
+            </Link>
         </nav>
     )
 }

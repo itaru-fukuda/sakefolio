@@ -28,7 +28,7 @@ const SakeSearchSchema = z.object({
 })
 
 interface SakeSearchFormProps {
-    availableTags: { id: number; tag: string }[]
+    availableTags: { id: number; tag: string; category?: string | null }[]
 }
 
 export function SakeSearchForm({ availableTags }: SakeSearchFormProps) {
@@ -96,28 +96,50 @@ export function SakeSearchForm({ availableTags }: SakeSearchFormProps) {
 
 
 
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             <FormLabel>フレーバータグ</FormLabel>
-                            <div className="flex flex-wrap gap-2 p-4 bg-muted/20 rounded-md border max-h-[300px] overflow-y-auto">
-                                {availableTags.map((tag) => {
-                                    const isSelected = selectedTagIds.includes(tag.id)
-                                    return (
-                                        <Badge
-                                            key={tag.id}
-                                            variant={isSelected ? "default" : "outline"}
-                                            className={cn(
-                                                "cursor-pointer hover:opacity-80 transition-all select-none px-3 py-1",
-                                                isSelected ? "bg-primary text-primary-foreground border-primary" : "bg-background text-foreground border-border"
-                                            )}
-                                            onClick={() => toggleTag(tag.id)}
-                                        >
-                                            {tag.tag}
-                                        </Badge>
-                                    )
-                                })}
-                            </div>
+
+                            {/* Group tags by category */}
+                            {Object.entries(
+                                availableTags.reduce((acc, tag) => {
+                                    const cat = tag.category || "その他"
+                                    if (!acc[cat]) acc[cat] = []
+                                    acc[cat].push(tag)
+                                    return acc
+                                }, {} as Record<string, typeof availableTags>)
+                            ).map(([category, tags]) => (
+                                <div key={category} className="space-y-2">
+                                    <h4 className="text-sm font-medium text-muted-foreground border-l-2 pl-2 border-primary/50">
+                                        {category === "Aroma" ? "香り" :
+                                            category === "Taste" ? "味わい" :
+                                                category === "Texture" ? "質感・余韻" :
+                                                    category === "Temperature" ? "温度帯" :
+                                                        category === "Other" ? "その他特徴" :
+                                                            category}
+                                    </h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {tags.map((tag) => {
+                                            const isSelected = selectedTagIds.includes(tag.id)
+                                            return (
+                                                <Badge
+                                                    key={tag.id}
+                                                    variant={isSelected ? "default" : "outline"}
+                                                    className={cn(
+                                                        "cursor-pointer hover:opacity-80 transition-all select-none px-3 py-1",
+                                                        isSelected ? "bg-primary text-primary-foreground border-primary" : "bg-background text-foreground border-border"
+                                                    )}
+                                                    onClick={() => toggleTag(tag.id)}
+                                                >
+                                                    {tag.tag}
+                                                </Badge>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+
                             <FormDescription>
-                                指定した特徴を持つ銘柄を絞り込みます（OR条件）。
+                                指定した特徴を持つ銘柄を絞り込みます（AND条件）。
                             </FormDescription>
                         </div>
 

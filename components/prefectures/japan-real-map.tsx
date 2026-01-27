@@ -43,15 +43,38 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
         setHoveredLocationName(null)
     }
 
+    const mainLocations = Japan.locations.filter((l: any) => l.id !== "okinawa" && l.id !== "hokkaido")
+    const okinawaLocation = Japan.locations.find((l: any) => l.id === "okinawa")
+    const hokkaidoLocation = Japan.locations.find((l: any) => l.id === "hokkaido")
+
+    // Custom ViewBox for Main Map
+    // Original: 0 0 438 516
+    // Cut off Top (Hokkaido space) -> Start y=60 (Adds padding above Aomori ~125)
+    // Cut off Bottom (Okinawa space) -> End y=430 (Kagoshima ends ~425)
+    // Width maintained
+    const mainViewBox = "0 60 438 370"
+
+    // Custom ViewBox for Okinawa Inset
+    // Centered on main island (approx 85, 470)
+    // Zoom level maintained (Width 50)
+    const okinawaViewBox = "65 435 40 50"
+
+    // Custom ViewBox for Hokkaido Inset
+    // Hokkaido starts ~330, 71
+    // Box roughly 290 40 160 120
+    const hokkaidoViewBox = "300 10 150 90"
+
     return (
-        <div className={cn("japan-svg-map-container w-full h-full relative cursor-default", className)}>
+        <div className={cn("japan-real-map-container w-full h-full relative font-sans select-none", className)}>
+
+            {/* Main Map (Honshu, Shikoku, Kyushu) */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox={Japan.viewBox}
-                className="w-full h-auto"
-                aria-label={Japan.label}
+                viewBox={mainViewBox}
+                className="w-full h-auto max-h-[700px] mx-auto"
+                aria-label="Map of Japan (Main)"
             >
-                {Japan.locations.map((location: { id: string; name: string; path: string }) => {
+                {mainLocations.map((location: { id: string; name: string; path: string }) => {
                     const isHovered = hoveredLocationName === location.name
                     return (
                         <path
@@ -72,16 +95,73 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
                 })}
             </svg>
 
+            {/* Okinawa Inset (Bottom Right) */}
+            {okinawaLocation && (
+                <div className="absolute bottom-0 right-0 md:bottom-4 md:right-4 w-40 h-40 border border-gray-200 bg-white/90 shadow-sm rounded-sm overflow-hidden z-20">
+                    {/* Added z-20 for layering if needed, bg opacity increased */}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox={okinawaViewBox}
+                        className="w-full h-full p-1"
+                        aria-label="Map of Okinawa"
+                    >
+                        <path
+                            key={okinawaLocation.id}
+                            id={okinawaLocation.id}
+                            name={okinawaLocation.name}
+                            d={okinawaLocation.path}
+                            className={cn(
+                                "stroke-gray-300 stroke-[1px] transition-all duration-200 cursor-pointer outline-none",
+                                hoveredLocationName === okinawaLocation.name ? "fill-primary" : "fill-white hover:fill-blue-50"
+                            )}
+                            onMouseEnter={handleLocationMouseOver}
+                            onMouseMove={handleLocationMouseMove}
+                            onMouseLeave={handleLocationMouseOut}
+                            onClick={handleLocationClick}
+                        />
+                    </svg>
+                    <span className="absolute bottom-1 right-2 text-xs font-medium text-muted-foreground/80 bg-white/50 px-1 rounded">沖縄</span>
+                </div>
+            )}
+
+            {/* Hokkaido Inset (Top Left) */}
+            {hokkaidoLocation && (
+                <div className="absolute top-0 left-0 md:top-4 md:left-4 w-40 h-40 md:w-56 md:h-56 border border-gray-200 bg-white/90 shadow-sm rounded-sm overflow-hidden z-20">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox={hokkaidoViewBox}
+                        className="w-full h-full p-1"
+                        aria-label="Map of Hokkaido"
+                    >
+                        <path
+                            key={hokkaidoLocation.id}
+                            id={hokkaidoLocation.id}
+                            name={hokkaidoLocation.name}
+                            d={hokkaidoLocation.path}
+                            className={cn(
+                                "stroke-gray-300 stroke-[1px] transition-all duration-200 cursor-pointer outline-none",
+                                hoveredLocationName === hokkaidoLocation.name ? "fill-primary" : "fill-white hover:fill-blue-50"
+                            )}
+                            onMouseEnter={handleLocationMouseOver}
+                            onMouseMove={handleLocationMouseMove}
+                            onMouseLeave={handleLocationMouseOut}
+                            onClick={handleLocationClick}
+                        />
+                    </svg>
+                    <span className="absolute bottom-1 right-2 text-xs font-medium text-muted-foreground/80 bg-white/50 px-1 rounded">北海道</span>
+                </div>
+            )}
+
+            {/* Tooltip */}
             {hoveredLocationName && (
                 <div
                     className="fixed z-50 px-3 py-1.5 text-sm font-bold text-white bg-slate-800/90 rounded shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 backdrop-blur-sm whitespace-nowrap"
                     style={{
                         left: tooltipPos.x,
-                        top: tooltipPos.y - 10, // Slight offset above cursor
+                        top: tooltipPos.y - 10,
                     }}
                 >
                     {findPrefectureByName(hoveredLocationName, prefectures)?.name || hoveredLocationName}
-                    {/* Tiny triangle for speech bubble effect */}
                     <div className="absolute left-1/2 -bottom-1 w-2 h-2 bg-slate-800/90 transform -translate-x-1/2 rotate-45"></div>
                 </div>
             )}

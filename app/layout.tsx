@@ -15,7 +15,7 @@ const notoSerifJP = Noto_Serif_JP({
 });
 
 export const metadata: Metadata = {
-  title: "Sakefolio - 日本酒記録・評価アプリ",
+  title: "SAKEfolio - 日本酒記録・評価アプリ",
   description: "日本酒の飲酒記録、評価、プロ評価との比較ができるアプリケーション",
 };
 

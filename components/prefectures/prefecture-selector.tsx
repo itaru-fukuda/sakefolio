@@ -57,15 +57,17 @@ export function PrefectureSelector({ prefectures }: PrefectureSelectorProps) {
 
                     return (
                         <div key={region.name}>
-                            <h2 className="text-xl font-bold mb-4 pb-2 border-b-2 border-primary/20 inline-block text-primary">
+                            <h2 className="text-lg font-bold mb-2 pb-1 border-b-2 border-primary/20 inline-block text-primary">
                                 {region.name}
                             </h2>
-                            <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+                            <div className="grid gap-2 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
                                 {regionPrefectures.map((pref) => (
                                     <Link key={pref.code} href={`/prefectures/${pref.code}`}>
-                                        <Card className="h-full transition-colors hover:bg-muted/50">
-                                            <CardHeader className="p-2 text-center">
-                                                <CardTitle className="text-sm">{pref.name}</CardTitle>
+                                        <Card className="h-full transition-colors hover:bg-muted/50 border-gray-200 shadow-none">
+                                            <CardHeader className="px-1 py-1 text-center flex items-center justify-center h-full">
+                                                <CardTitle className="text-sm font-bold text-foreground">
+                                                    {pref.name}
+                                                </CardTitle>
                                             </CardHeader>
                                         </Card>
                                     </Link>

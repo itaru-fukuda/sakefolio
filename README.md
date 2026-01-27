@@ -1,4 +1,4 @@
-# Sakefolio - 日本酒記録アプリ
+# SAKEfolio - 日本酒記録アプリ
 
 Next.js + Supabase + TailwindCSS で構築された日本酒の評価・記録アプリです。
 

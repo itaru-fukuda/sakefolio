@@ -47,8 +47,21 @@ export async function createLog(formData: z.infer<typeof DrinkLogSchema>) {
         is_public: formData.is_public
     })
 
+
     if (error) {
         return { error: error.message }
+    }
+
+    // Auto-remove from wishlist if exists
+    const { error: wishlistError } = await supabase
+        .from("wishlists")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("variant_id", formData.variant_id)
+
+    if (wishlistError) {
+        // Just log it, don't fail the request
+        console.error("Failed to auto-remove from wishlist", wishlistError)
     }
 
     revalidatePath("/logs")
@@ -59,7 +72,7 @@ export async function createLog(formData: z.infer<typeof DrinkLogSchema>) {
 
 export async function getFlavorTags() {
     const supabase = await createClient()
-    const { data } = await supabase.from("sakenowa_flavor_tags").select("id, tag").order("id") // id order ok?
+    const { data } = await supabase.from("sakenowa_flavor_tags").select("id, tag, category").eq("delete_flag", 0).order("id") // id order ok?
     return data || []
 }
 

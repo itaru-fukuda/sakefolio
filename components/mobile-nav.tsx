@@ -28,7 +28,7 @@ export function MobileNav() {
                 <SheetHeader className="px-1 text-left">
                     <SheetTitle>
                         <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
-                            <span className="font-bold">Sakefolio</span>
+                            <span className="font-bold">SAKEfolio</span>
                         </Link>
                     </SheetTitle>
                 </SheetHeader>
@@ -61,6 +61,13 @@ export function MobileNav() {
                             className="text-foreground/70 transition-colors hover:text-foreground"
                         >
                             都道府県から探す
+                        </Link>
+                        <Link
+                            href="/logs/search"
+                            onClick={() => setOpen(false)}
+                            className="text-foreground/70 transition-colors hover:text-foreground"
+                        >
+                            詳細検索
                         </Link>
                         <div className="py-2"></div>
                         <Link

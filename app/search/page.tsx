@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sheet"
 
 import { SearchPagination } from "@/components/sake/search-pagination"
+import { WishlistAddButton } from "@/components/wishlist/wishlist-add-button"
 
 export default async function SearchPage({
     searchParams,
@@ -62,7 +63,7 @@ export default async function SearchPage({
                 <h1 className="text-3xl font-bold font-serif mb-4">日本酒データベース検索</h1>
                 <p className="text-muted-foreground">
                     全国の銘柄・酒蔵から、あなた好みの日本酒を探しましょう。<br />
-                    気になったお酒は、その場で「飲みたいリスト」に登録できます（未実装: 今はログ詳細へ）。
+                    気になったお酒は、その場で「飲みたいリスト」に登録できます。
                 </p>
             </div>
 
@@ -149,7 +150,8 @@ export default async function SearchPage({
                                                     </div>
                                                 )}
 
-                                                <div className="mt-4 pt-4 border-t flex justify-end">
+                                                <div className="mt-4 pt-4 border-t flex justify-end gap-2">
+                                                    <WishlistAddButton variantId={sake.variant_id} />
                                                     <Button size="sm" asChild>
                                                         <Link href={`/logs/new?variant_id=${sake.variant_id}`}>
                                                             <Ticket className="w-4 h-4 mr-2" />
