@@ -15,13 +15,18 @@ export default function SignupPage() {
                 <CardContent>
                     <SignupForm />
                 </CardContent>
-                <CardFooter className="flex justify-center">
-                    <p className="text-sm text-muted-foreground">
+                <CardFooter className="flex flex-col gap-4">
+                    <p className="text-sm text-muted-foreground text-center">
                         すでにアカウントをお持ちですか？{" "}
                         <Link href="/login" className="text-primary hover:underline">
                             ログイン
                         </Link>
                     </p>
+                    <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md border border-border/50">
+                        <p className="font-medium mb-1">メールアドレスの取り扱いについて</p>
+                        登録されたメールアドレスは、ログインおよびアカウント管理の目的にのみ使用されます。
+                        他のユーザーへの公開や、許可のないお知らせメールの送信は行いませんのでご安心ください。
+                    </div>
                 </CardFooter>
             </Card>
         </div>

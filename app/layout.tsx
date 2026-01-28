@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Toaster } from "@/components/ui/sonner";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const notoSerifJP = Noto_Serif_JP({
@@ -14,7 +15,20 @@ const notoSerifJP = Noto_Serif_JP({
   variable: "--font-serif",
 });
 
+export const viewport = {
+  themeColor: "#0f172a",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevent zooming for native app feel
+};
+
 export const metadata: Metadata = {
+  appleWebApp: {
+    title: "SAKEfolio",
+    statusBarStyle: "default",
+    startupImage: ["/images/pwa/apple-icon.png"],
+  },
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sakefolio.vercel.app"),
   title: {
     default: "SAKEfolio - 日本酒記録・評価アプリ",
@@ -70,6 +84,7 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <SiteFooter />
           </div>
+          <InstallPrompt />
           <ScrollToTop />
           <Toaster />
         </ThemeProvider>
