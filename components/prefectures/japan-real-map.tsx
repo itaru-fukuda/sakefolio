@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Japan from "@svg-maps/japan"
 import { cn } from "@/lib/utils"
+import { Loader2 } from "lucide-react"
 // We don't need react-svg-map css anymore, we can style manually
 
 type Prefecture = {
@@ -19,6 +20,7 @@ interface JapanRealMapProps {
 
 export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
     const router = useRouter()
+    const [isPending, startTransition] = useTransition()
     const [hoveredLocationName, setHoveredLocationName] = useState<string | null>(null)
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
 
@@ -26,7 +28,9 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
         const locationName = event.currentTarget.getAttribute("name")
         const pref = findPrefectureByName(locationName, prefectures)
         if (pref) {
-            router.push(`/prefectures/${pref.code}`)
+            startTransition(() => {
+                router.push(`/prefectures/${pref.code}`)
+            })
         }
     }
 
@@ -165,6 +169,12 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
                 >
                     {findPrefectureByName(hoveredLocationName, prefectures)?.name || hoveredLocationName}
                     <div className="absolute left-1/2 -bottom-1 w-2 h-2 bg-slate-800/90 transform -translate-x-1/2 rotate-45"></div>
+                </div>
+            )}
+            {/* Loading Overlay */}
+            {isPending && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-[1px] rounded-lg animate-in fade-in duration-200 pointer-events-none">
+                    <Loader2 className="w-12 h-12 animate-spin text-primary drop-shadow-md" />
                 </div>
             )}
         </div>
