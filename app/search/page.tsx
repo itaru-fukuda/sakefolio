@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { MapPin, Building2, Ticket, Filter } from "lucide-react"
 import {
@@ -85,7 +86,9 @@ export default async function SearchPage({
                                 </SheetDescription>
                             </SheetHeader>
                             <div className="mt-4">
-                                <SakeSearchForm availableTags={availableTags} />
+                                <Suspense fallback={<div className="h-64 bg-muted animate-pulse rounded-lg" />}>
+                                    <SakeSearchForm availableTags={availableTags} />
+                                </Suspense>
                             </div>
                         </SheetContent>
                     </Sheet>

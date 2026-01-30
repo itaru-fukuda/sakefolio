@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MapPin, Building2, Filter, Search } from "lucide-react"
+import { Suspense } from "react"
 import {
     Sheet,
     SheetContent,
@@ -73,7 +74,9 @@ export default async function BreweriesPage({
                                 </SheetDescription>
                             </SheetHeader>
                             <div className="mt-4">
-                                <BrewerySearchForm prefectures={prefectures || []} />
+                                <Suspense fallback={<div className="h-64 bg-muted animate-pulse rounded-lg" />}>
+                                    <BrewerySearchForm prefectures={prefectures || []} />
+                                </Suspense>
                             </div>
                         </SheetContent>
                     </Sheet>
@@ -81,7 +84,9 @@ export default async function BreweriesPage({
 
                 {/* Sidebar: Search Form (Desktop) */}
                 <div className="hidden md:block md:col-span-4">
-                    <BrewerySearchForm prefectures={prefectures || []} />
+                    <Suspense fallback={<div className="h-96 bg-muted animate-pulse rounded-lg" />}>
+                        <BrewerySearchForm prefectures={prefectures || []} />
+                    </Suspense>
                 </div>
 
                 {/* Main Content: Results */}
