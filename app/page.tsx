@@ -47,7 +47,7 @@ export default async function Home() {
             SAKEfolio
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-white/90 font-light leading-relaxed font-serif drop-shadow-md">
-            至高の一杯を、美しく記録する。<br className="hidden md:inline" />
+            至高の一杯を、美しく記録する。<br />
             日々の感動を、確かな記憶へ。
           </p>
 
@@ -88,7 +88,7 @@ export default async function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Prefecture Card */}
                 <Link href="/prefectures" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
+                  <div className="relative h-48 sm:h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_region_nature.png')" }}></div>
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
@@ -103,7 +103,7 @@ export default async function Home() {
 
                 {/* Brewery Card */}
                 <Link href="/breweries" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
+                  <div className="relative h-48 sm:h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_brewery.png')" }}></div>
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
@@ -118,7 +118,7 @@ export default async function Home() {
 
                 {/* Search Card */}
                 <Link href="/logs/search" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
+                  <div className="relative h-48 sm:h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_search.png')" }}></div>
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
@@ -152,8 +152,10 @@ export default async function Home() {
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground leading-relaxed text-center">
-              SAKEfolio(サケフォリオ)は、あなたの日本酒ライフを豊かにするための記録ツールです。<br></br>
-              飲んだ銘柄の感想や評価を記録し、あなただけの日本酒ポートフォリオを作成しましょう。
+              SAKEfolio(サケフォリオ)は、あなたの日本酒ライフを<br className="md:hidden" />
+              豊かにするための記録ツールです。<br />
+              飲んだ銘柄の感想や評価を記録し、あなただけの<br className="md:hidden" />
+              日本酒ポートフォリオを作成しましょう。
             </CardContent>
           </Card>
         </div>
