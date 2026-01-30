@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Serif_JP } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -80,16 +81,18 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <GlobalLoaderProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
-              <main className="flex-1">{children}</main>
-              <SiteFooter />
-            </div>
-            <InstallPrompt />
-            <ScrollToTop />
-            <Toaster />
-          </GlobalLoaderProvider>
+          <Suspense fallback={null}>
+            <GlobalLoaderProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader />
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+              </div>
+              <InstallPrompt />
+              <ScrollToTop />
+              <Toaster />
+            </GlobalLoaderProvider>
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>
