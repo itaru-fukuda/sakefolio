@@ -10,6 +10,7 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
     Form,
     FormControl,
@@ -46,6 +47,7 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react"
 
 import { SakeRegistrationDialog } from "@/components/sake/sake-registration-dialog"
+import { FlavorTagSelector } from "@/components/flavor-tag-selector"
 import { useRouter } from "next/navigation"
 
 
@@ -89,7 +91,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
             variant_id: defaultVariantId || "",
             rating: 5,
             impression: "",
-            is_public: false,
+            is_public: true,
             type: "",
         },
     })
@@ -378,47 +380,76 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     }}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="drank_on"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                            <FormLabel>飲んだ日</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                        <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                                "w-[240px] pl-3 text-left font-normal",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            {field.value ? (
-                                                format(field.value, "PPP")
-                                            ) : (
-                                                <span>日付を選択</span>
-                                            )}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                        disabled={(date) =>
-                                            date > new Date() || date < new Date("1900-01-01")
-                                        }
-                                        initialFocus
+                <div className="flex gap-4">
+                    <FormField
+                        control={form.control}
+                        name="drank_on"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>飲んだ日</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                disabled={form.watch("date_unknown")}
+                                                className={cn(
+                                                    "w-[240px] pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, "yyyy/MM/dd")
+                                                ) : (
+                                                    <span>日付を選択</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value || undefined}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                                date > new Date() || date < new Date("1900-01-01")
+                                            }
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="date_unknown"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 pt-9">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={(checked) => {
+                                            field.onChange(checked)
+                                            if (checked) {
+                                                form.setValue("drank_on", undefined)
+                                                form.clearErrors("drank_on")
+                                            }
+                                        }}
                                     />
-                                </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <FormLabel>
+                                        日付不明
+                                    </FormLabel>
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <FormField
                     control={form.control}
@@ -464,15 +495,20 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     )}
                 />
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-6">
                     <FormField
                         control={form.control}
                         name="aroma"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>香りメモ (任意)</FormLabel>
+                            <FormItem className="flex flex-col">
+                                <FormLabel>香り特徴 (タグ)</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="華やか、メロン系" {...field} />
+                                    <FlavorTagSelector
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        category="Aroma"
+                                        placeholder="華やか、フルーティーなど"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -482,11 +518,73 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                         control={form.control}
                         name="taste"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>味メモ (任意)</FormLabel>
+                            <FormItem className="flex flex-col">
+                                <FormLabel>味・印象 (タグ)</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="甘口、酸味強め" {...field} />
+                                    <FlavorTagSelector
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        category="Taste"
+                                        placeholder="甘口、すっきりなど"
+                                    />
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="texture"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>質感・余韻 (タグ)</FormLabel>
+                                <FormControl>
+                                    <FlavorTagSelector
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        category="Texture"
+                                        placeholder="とろみ、キレ、発泡感など"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="feature"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>その他特徴 (タグ)</FormLabel>
+                                <FormControl>
+                                    <FlavorTagSelector
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        category="Feature"
+                                        placeholder="熟成、濁り、山廃など"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="temperature"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col sm:col-span-2">
+                                <FormLabel>温度帯 (タグ)</FormLabel>
+                                <FormControl>
+                                    <FlavorTagSelector
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        category="Temperature"
+                                        placeholder="冷酒、熱燗、常温など"
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    飲んだ時の温度帯を選択してください。
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

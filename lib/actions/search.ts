@@ -156,8 +156,24 @@ export async function searchSakeDatabase(
     }
 
     if (query) {
+        // Step 1: Find brands that match the query
+        const { data: matchedBrands } = await supabase
+            .from("brands")
+            .select("id")
+            .ilike("name", `%${query}%`)
+            .limit(100) // Limit to avoid massive ID lists
+
+        const matchedBrandIds = matchedBrands?.map(b => b.id) || []
         const q = `%${query}%`
-        dbQuery = dbQuery.or(`name.ilike.${q},brand.name.ilike.${q}`)
+
+        // Step 2: Build OR condition
+        // variant.name matches OR variant.brand_id is in matchedBrandIds
+        let orCondition = `name.ilike.${q}`
+        if (matchedBrandIds.length > 0) {
+            orCondition += `,brand_id.in.(${matchedBrandIds.join(",")})`
+        }
+
+        dbQuery = dbQuery.or(orCondition)
     }
 
     // Apply Pagination

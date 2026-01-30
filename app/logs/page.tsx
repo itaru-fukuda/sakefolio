@@ -75,7 +75,7 @@ export default async function LogsPage({
                                     <div className="flex items-center justify-between">
                                         <p className="text-sm text-muted-foreground flex items-center">
                                             <Calendar className="mr-1 h-3 w-3" />
-                                            {format(new Date(log.drank_on), "yyyy/MM/dd")}
+                                            {log.drank_on ? format(new Date(log.drank_on), "yyyy/MM/dd") : "-"}
                                         </p>
                                         <div className="flex items-center bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-bold">
                                             <Star className="w-3 h-3 mr-1 fill-current" />

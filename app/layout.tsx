@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Toaster } from "@/components/ui/sonner";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
+import { GlobalLoaderProvider } from "@/components/global-loader-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const notoSerifJP = Noto_Serif_JP({
@@ -79,14 +80,16 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
-          <InstallPrompt />
-          <ScrollToTop />
-          <Toaster />
+          <GlobalLoaderProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+            <InstallPrompt />
+            <ScrollToTop />
+            <Toaster />
+          </GlobalLoaderProvider>
         </ThemeProvider>
       </body>
     </html>

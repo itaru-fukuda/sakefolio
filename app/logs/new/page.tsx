@@ -2,8 +2,10 @@ import { createClient } from "@/lib/supabase/server"
 import { LogForm } from "@/components/logs/log-form"
 import { redirect } from "next/navigation"
 
-export default async function NewLogPage() {
+export default async function NewLogPage({ searchParams }: { searchParams: Promise<{ variant_id?: string }> }) {
     const supabase = await createClient()
+
+    const { variant_id } = await searchParams
 
     const {
         data: { user },
@@ -36,7 +38,7 @@ export default async function NewLogPage() {
     return (
         <div className="container max-w-2xl py-10 px-4 mx-auto">
             <h1 className="text-2xl font-bold font-serif mb-8">お酒を記録する</h1>
-            <LogForm variants={formattedVariants} />
+            <LogForm variants={formattedVariants} defaultVariantId={variant_id} />
         </div>
     )
 }

@@ -5,7 +5,7 @@ import { SearchPagination } from "@/components/sake/search-pagination"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { MapPin, Building2, Filter } from "lucide-react"
+import { MapPin, Building2, Filter, Search } from "lucide-react"
 import {
     Sheet,
     SheetContent,
@@ -31,14 +31,18 @@ export default async function BreweriesPage({
 
     const params = await searchParams
     const query = params.q
-    const prefectureCode = params.pref
+    // Support multiple prefectures comma separated
+    const prefectureCodes = params.pref ? params.pref.split(",") : undefined
     const page = Number(params.page) || 1
     const limit = 20
 
     // 2. Fetch Breweries
-    const { data: breweries, totalCount } = await searchBreweries(query, prefectureCode, page, limit)
+    const { data: breweries, totalCount } = await searchBreweries(query, prefectureCodes, page, limit)
 
     const totalPages = Math.ceil(totalCount / limit)
+
+    // Check if initial load (no params)
+    const isInitial = !query && (!prefectureCodes || prefectureCodes.length === 0)
 
     return (
         <div className="container py-12 px-4 mx-auto max-w-5xl">
@@ -91,7 +95,15 @@ export default async function BreweriesPage({
                     </h2>
 
                     <div className="space-y-4">
-                        {breweries.length > 0 ? (
+                        {isInitial ? (
+                            <div className="text-center py-20 bg-muted/20 rounded-lg border border-dashed">
+                                <Search className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
+                                <h3 className="text-lg font-bold mb-2">検索条件を入力してください</h3>
+                                <p className="text-muted-foreground">
+                                    左側のフォームからキーワードや都道府県を指定して検索してください。
+                                </p>
+                            </div>
+                        ) : breweries.length > 0 ? (
                             <>
                                 {breweries.map((brewery: BrewerySearchResult) => (
                                     <Link href={`/breweries/${brewery.id}`} key={brewery.id} className="block group">

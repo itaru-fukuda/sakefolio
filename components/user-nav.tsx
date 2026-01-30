@@ -72,6 +72,12 @@ export function UserNav({ user, profile }: UserNavProps) {
                     <DropdownMenuItem onClick={() => router.push("/logs/new")}>
                         新しいログを記録
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/timeline")}>
+                        タイムライン
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/users/search")}>
+                        ユーザー検索
+                    </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>

@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Search, MapPin, TrendingUp, BookOpen, ChevronRight, Building2 } from "lucide-react"
 import { GlobalSearch } from "@/components/global-search"
+import { HomeTimeline } from "@/components/home-timeline"
+import { Suspense } from "react"
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Editorial Hero Section */}
@@ -74,6 +76,7 @@ export default function Home() {
 
           {/* Main Column - Browse & Discovery */}
           <div className="md:col-span-8 flex flex-col gap-12">
+
             <section>
               <div className="flex items-center justify-between mb-8 border-b border-border pb-4">
                 <h2 className="text-2xl font-serif font-bold tracking-wide">探す・見つける</h2>
@@ -85,8 +88,8 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Prefecture Card */}
                 <Link href="/prefectures" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-shadow">
-                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_region.png')" }}></div>
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
+                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_region_nature.png')" }}></div>
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
                       <MapPin className="h-8 w-8 mb-4 text-white/90 drop-shadow-md" strokeWidth={1.5} />
@@ -100,7 +103,7 @@ export default function Home() {
 
                 {/* Brewery Card */}
                 <Link href="/breweries" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-shadow">
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_brewery.png')" }}></div>
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
@@ -115,7 +118,7 @@ export default function Home() {
 
                 {/* Search Card */}
                 <Link href="/logs/search" className="group block h-full">
-                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-shadow">
+                  <div className="relative h-64 overflow-hidden rounded-sm bg-muted shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98] active:brightness-90">
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: "url('/images/nav_card_search.png')" }}></div>
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-500"></div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center relative z-10">
@@ -133,19 +136,26 @@ export default function Home() {
 
           {/* Sidebar Column */}
           <div className="md:col-span-4 flex flex-col gap-8">
-            <Card className="rounded-sm border-none shadow-sm bg-muted/30">
-              <CardHeader>
-                <CardTitle className="font-serif text-lg flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" /> SAKEfolioについて
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground leading-relaxed">
-                SAKEfolio(サケフォリオ)は、あなたの日本酒ライフを豊かにするための記録ツールです。<br></br>
-                飲んだ銘柄の感想や評価を記録し、あなただけの日本酒ポートフォリオを作成しましょう。
-              </CardContent>
-            </Card>
+            <Suspense fallback={null}>
+              <HomeTimeline compact={true} />
+            </Suspense>
           </div>
 
+        </div>
+
+        {/* About Section - Moved to Bottom */}
+        <div className="mt-20 border-t border-border pt-12">
+          <Card className="rounded-sm border-none shadow-sm bg-muted/30 max-w-4xl mx-auto">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg flex items-center gap-2 justify-center">
+                <BookOpen className="h-4 w-4" /> SAKEfolioについて
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground leading-relaxed text-center">
+              SAKEfolio(サケフォリオ)は、あなたの日本酒ライフを豊かにするための記録ツールです。<br></br>
+              飲んだ銘柄の感想や評価を記録し、あなただけの日本酒ポートフォリオを作成しましょう。
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

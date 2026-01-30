@@ -37,7 +37,11 @@ export async function signup(formData: z.infer<typeof SignupSchema>) {
     })
 
     if (error) {
-        return { error: error.message }
+        console.error("Signup error:", error)
+        if (error.message.includes("User already registered") || error.code === "user_already_exists") {
+            return { error: "このメールアドレスは既に登録されています。" }
+        }
+        return { error: "アカウント作成に失敗しました。" + error.message }
     }
 
     revalidatePath("/", "layout")

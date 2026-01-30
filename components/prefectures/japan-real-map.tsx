@@ -52,7 +52,10 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
     // Cut off Top (Hokkaido space) -> Start y=60 (Adds padding above Aomori ~125)
     // Cut off Bottom (Okinawa space) -> End y=430 (Kagoshima ends ~425)
     // Width maintained
-    const mainViewBox = "0 60 438 370"
+    // Custom ViewBox for Main Map
+    // Trimmed width to zoom in (approx 15 from left, 10 from right)
+    // Trimmed top to reduce empty space above Aomori (started at 60 -> 70)
+    const mainViewBox = "15 70 410 360"
 
     // Custom ViewBox for Okinawa Inset
     // Centered on main island (approx 85, 470)
@@ -97,8 +100,7 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
 
             {/* Okinawa Inset (Bottom Right) */}
             {okinawaLocation && (
-                <div className="absolute bottom-0 right-0 md:bottom-4 md:right-4 w-40 h-40 border border-gray-200 bg-white/90 shadow-sm rounded-sm overflow-hidden z-20">
-                    {/* Added z-20 for layering if needed, bg opacity increased */}
+                <div className="absolute bottom-0 right-0 sm:bottom-2 sm:right-2 md:bottom-4 md:right-4 w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 border-l border-t border-gray-200 bg-white/95 shadow-sm rounded-tl-sm sm:rounded-sm overflow-hidden z-20">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox={okinawaViewBox}
@@ -120,13 +122,13 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
                             onClick={handleLocationClick}
                         />
                     </svg>
-                    <span className="absolute bottom-1 right-2 text-xs font-medium text-muted-foreground/80 bg-white/50 px-1 rounded">沖縄</span>
+                    <span className="absolute bottom-0.5 right-1 text-[10px] md:text-xs font-medium text-muted-foreground/80 bg-white/50 px-1 rounded">沖縄</span>
                 </div>
             )}
 
             {/* Hokkaido Inset (Top Left) */}
             {hokkaidoLocation && (
-                <div className="absolute top-0 left-0 md:top-4 md:left-4 w-40 h-40 md:w-56 md:h-56 border border-gray-200 bg-white/90 shadow-sm rounded-sm overflow-hidden z-20">
+                <div className="absolute top-0 left-0 sm:top-2 sm:left-2 md:top-4 md:left-4 w-24 h-24 sm:w-40 sm:h-40 md:w-56 md:h-56 border-r border-b border-gray-200 bg-white/95 shadow-sm rounded-br-sm sm:rounded-sm overflow-hidden z-20">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox={hokkaidoViewBox}
@@ -148,7 +150,7 @@ export function JapanRealMap({ prefectures, className }: JapanRealMapProps) {
                             onClick={handleLocationClick}
                         />
                     </svg>
-                    <span className="absolute bottom-1 right-2 text-xs font-medium text-muted-foreground/80 bg-white/50 px-1 rounded">北海道</span>
+                    <span className="absolute bottom-0.5 right-1 text-[10px] md:text-xs font-medium text-muted-foreground/80 bg-white/50 px-1 rounded">北海道</span>
                 </div>
             )}
 

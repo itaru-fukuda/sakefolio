@@ -1,26 +1,12 @@
 import Link from "next/link"
+import { Suspense } from "react"
 import { MainNav } from "@/components/main-nav"
 import { MobileNav } from "@/components/mobile-nav"
-import { UserNav } from "@/components/user-nav"
-import { createClient } from "@/lib/supabase/server"
+import { UserMenuFetcher } from "@/components/user-menu-fetcher"
 import { Button } from "@/components/ui/button"
+import { UserSearch } from "lucide-react"
 
-export async function SiteHeader() {
-    const supabase = await createClient()
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-
-    let profile = null
-    if (user) {
-        const { data } = await supabase
-            .from("profiles")
-            .select("role, display_name, avatar_url")
-            .eq("user_id", user.id)
-            .single()
-        profile = data
-    }
-
+export function SiteHeader() {
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center gap-4 mx-auto px-4">
@@ -38,15 +24,14 @@ export async function SiteHeader() {
                         {/* Search Placeholder */}
                     </div>
                     <nav className="flex items-center space-x-2">
-                        {user ? (
-                            <UserNav user={user} profile={profile} />
-                        ) : (
-                            <Button asChild variant="ghost" size="sm">
-                                <Link href="/login">
-                                    ログイン
-                                </Link>
-                            </Button>
-                        )}
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href="/users/search" aria-label="ユーザー検索">
+                                <UserSearch className="h-5 w-5" />
+                            </Link>
+                        </Button>
+                        <Suspense fallback={<Button variant="ghost" size="sm" disabled>...</Button>}>
+                            <UserMenuFetcher />
+                        </Suspense>
                     </nav>
                 </div>
             </div>

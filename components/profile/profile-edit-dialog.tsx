@@ -13,7 +13,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateProfile, ProfileState } from "@/lib/actions/profile"
-import { useFormState, useFormStatus } from "react-dom"
+import { useActionState } from "react"
+import { useFormStatus } from "react-dom"
 import { useState, useEffect } from "react"
 import { Loader2, User } from "lucide-react"
 import Image from "next/image"
@@ -33,7 +34,7 @@ interface ProfileEditDialogProps {
 
 export function ProfileEditDialog({ profile }: ProfileEditDialogProps) {
     const initialState: ProfileState = { message: "", errors: {} }
-    const [state, formAction] = useFormState(updateProfile, initialState)
+    const [state, formAction] = useActionState(updateProfile, initialState)
     const [open, setOpen] = useState(false)
     const [selectedAvatar, setSelectedAvatar] = useState<string | null>(profile.avatar_url)
 

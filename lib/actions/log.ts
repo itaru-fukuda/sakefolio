@@ -39,11 +39,14 @@ export async function createLog(formData: z.infer<typeof DrinkLogSchema>) {
     const { error } = await supabase.from("drink_logs").insert({
         user_id: user.id,
         variant_id: formData.variant_id,
-        drank_on: formData.drank_on.toISOString(), // Supabase handles ISO string for date/timestamptz
+        drank_on: formData.drank_on ? formData.drank_on.toISOString() : null,
         rating: formData.rating,
         impression: formData.impression,
         aroma: formData.aroma,
         taste: formData.taste,
+        feature: formData.feature,
+        texture: formData.texture,
+        temperature: formData.temperature,
         is_public: formData.is_public
     })
 
@@ -70,9 +73,15 @@ export async function createLog(formData: z.infer<typeof DrinkLogSchema>) {
 
 
 
-export async function getFlavorTags() {
+export async function getFlavorTags(category?: string) {
     const supabase = await createClient()
-    const { data } = await supabase.from("sakenowa_flavor_tags").select("id, tag, category").eq("delete_flag", 0).order("id") // id order ok?
+    let query = supabase.from("sakenowa_flavor_tags").select("id, tag, category").eq("delete_flag", 0).order("id")
+
+    if (category) {
+        query = query.eq("category", category)
+    }
+
+    const { data } = await query
     return data || []
 }
 
@@ -158,4 +167,74 @@ export async function getFilteredLogs(
     // But .select() with nested json usually returns unique root rows.
 
     return data
+}
+
+export async function getTimelineLogs(
+    currentUserId: string,
+    limit: number = 20
+) {
+    const supabase = await createClient()
+
+    // 1. Get List of Following IDs
+    const { data: follows, error: followError } = await supabase
+        .from("follows")
+        .select("following_id")
+        .eq("follower_id", currentUserId)
+
+    if (followError) {
+        console.error("Error fetching following:", JSON.stringify(followError, null, 2))
+        return []
+    }
+
+    const followingIds = follows.map(f => f.following_id)
+    const targetUserIds = [...followingIds]
+
+    if (targetUserIds.length === 0) return []
+
+    // 2. Fetch Logs (without joining profiles yet)
+    const { data: logs, error } = await supabase
+        .from("drink_logs")
+        .select(`
+            *,
+            variant:variants (
+                id, name, type, abv,
+                brand:brands (
+                    id, name,
+                    brewery:breweries (
+                        id, name,
+                        prefecture:prefectures ( code, name )
+                    )
+                )
+            )
+        `)
+        .in("user_id", targetUserIds)
+        .order("drank_on", { ascending: false })
+        .limit(limit)
+
+    if (error) {
+        console.error("Error fetching timeline logs:", JSON.stringify(error, null, 2))
+        return []
+    }
+
+    // 3. Fetch Profiles for these logs
+    const userIds = Array.from(new Set(logs.map(log => log.user_id)))
+    const { data: profiles, error: profileError } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url")
+        .in("user_id", userIds)
+
+    if (profileError) {
+        console.error("Error fetching profiles:", JSON.stringify(profileError, null, 2))
+        // Continue without profiles if error, or return logs with partial data
+    }
+
+    const profileMap = new Map(profiles?.map(p => [p.user_id, p]))
+
+    // 4. Merge
+    const logsWithUser = logs.map(log => ({
+        ...log,
+        user: profileMap.get(log.user_id) || null
+    }))
+
+    return logsWithUser
 }
