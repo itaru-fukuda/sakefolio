@@ -55,6 +55,7 @@ import { DrinkLogSchema } from "@/lib/validations/log"
 import { createLog } from "@/lib/actions/log"
 import type { z } from "zod"
 import { getSakeTypes } from "@/lib/actions/sake"
+import { ResponsiveCombobox, ComboboxItem } from "@/components/ui/responsive-combobox"
 
 interface LogFormProps {
     variants: {
@@ -149,72 +150,45 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                 {/* Brand Selection */}
                 <FormItem className="flex flex-col">
                     <FormLabel>銘柄</FormLabel>
-                    <Popover open={openBrandCombobox} onOpenChange={setOpenBrandCombobox} modal={true}>
-                        <PopoverTrigger asChild>
-                            <FormControl>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={openBrandCombobox}
-                                    className={cn(
-                                        "w-full justify-between",
-                                        !selectedBrandId && "text-muted-foreground"
-                                    )}
-                                >
-                                    {selectedBrandId
-                                        ? brands.find((b) => b.id === selectedBrandId)?.name
-                                        : "銘柄を選択"}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[300px] p-0" align="start">
-                            <Command
-                                filter={(value, search) => {
-                                    if (value.includes(search)) return 1
-                                    return 0
-                                }}
-                            >
-                                <CommandInput placeholder="銘柄を検索..." />
-                                <CommandList>
-                                    <CommandEmpty className="py-6 text-center text-sm">
-                                        <p className="text-muted-foreground mb-4">見つかりません</p>
-                                        <SakeRegistrationDialog
-                                            onSuccess={(id) => {
-                                                router.refresh()
-                                                form.setValue("variant_id", id, { shouldValidate: true })
-                                                setOpenBrandCombobox(false)
-                                            }}
-                                        />
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                        {brands.map((brand) => (
-                                            <CommandItem
-                                                value={brand.name}
-                                                key={brand.id}
-                                                keywords={[brand.name]}
-                                                onSelect={() => {
-                                                    setSelectedBrandId(brand.id)
-                                                    form.setValue("variant_id", "")
-                                                    setOpenBrandCombobox(false)
-                                                }}
-                                            >
-                                                <Check
-                                                    className={cn(
-                                                        "mr-2 h-4 w-4",
-                                                        selectedBrandId === brand.id
-                                                            ? "opacity-100"
-                                                            : "opacity-0"
-                                                    )}
-                                                />
-                                                {brand.name}
-                                            </CommandItem>
-                                        ))}
-                                    </CommandGroup>
-                                </CommandList>
-                            </Command>
-                        </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                        <ResponsiveCombobox
+                            items={brands.map(b => ({ value: b.id, label: b.name, keywords: [b.name] }))}
+                            selectedValue={selectedBrandId}
+                            onSelect={(value) => {
+                                if (value) {
+                                    setSelectedBrandId(value)
+                                    form.setValue("variant_id", "")
+                                } else {
+                                    // Handle clearing? LogForm didn't really allow clearing before (no X button), 
+                                    // but handleSelect allows toggle off. 
+                                    // If toggled off, clear selection
+                                    setSelectedBrandId(null)
+                                    form.setValue("variant_id", "")
+                                }
+                            }}
+                            placeholder="銘柄を選択"
+                            searchPlaceholder="銘柄を検索..."
+                            label="銘柄を選択"
+                            open={openBrandCombobox}
+                            onOpenChange={setOpenBrandCombobox}
+                            emptyContent={
+                                <div className="py-6 text-center text-sm">
+                                    <p className="text-muted-foreground mb-4">見つかりません</p>
+                                    <SakeRegistrationDialog
+                                        onSuccess={(id) => {
+                                            router.refresh()
+                                            // The ID returned is variant_id, assuming newly created.
+                                            // But we need to know the brand too? 
+                                            // SakeRegistrationDialog handles creation.
+                                            // Actually form.setValue("variant_id", id) is what original code did.
+                                            form.setValue("variant_id", id, { shouldValidate: true })
+                                            setOpenBrandCombobox(false)
+                                        }}
+                                    />
+                                </div>
+                            }
+                        />
+                    </FormControl>
                     <FormDescription>
                         飲んだ銘柄を選択してください。リストにない場合は新規登録できます。
                     </FormDescription>
@@ -227,79 +201,44 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     render={({ field }) => (
                         <FormItem className="flex flex-col">
                             <FormLabel>商品名</FormLabel>
-                            <Popover open={openVariantCombobox} onOpenChange={setOpenVariantCombobox} modal={true}>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                        <Button
-                                            variant="outline"
-                                            role="combobox"
-                                            aria-expanded={openVariantCombobox}
-                                            disabled={!selectedBrandId}
-                                            className={cn(
-                                                "w-full justify-between",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            {field.value
-                                                ? filteredVariants.find(
-                                                    (variant) => variant.id === field.value
-                                                )?.name
-                                                : "商品名を選択"}
-                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[300px] p-0" align="start">
-                                    <Command
-                                        filter={(value, search) => {
-                                            if (value.includes(search)) return 1
-                                            return 0
-                                        }}
-                                    >
-                                        <CommandInput placeholder="商品名を検索..." />
-                                        <CommandList>
-                                            <CommandEmpty className="py-2 text-center text-sm">
-                                                <p className="mb-2">見つかりません</p>
-                                                {/* Allow opening registration dialog from here too for new variants of same brand? 
-                                                    SakeRegistrationDialog supports pre-filling? Not yet. 
-                                                    For now just text.
-                                                */}
-                                            </CommandEmpty>
-                                            <CommandGroup>
-                                                {filteredVariants.map((variant) => (
-                                                    <CommandItem
-                                                        value={variant.name}
-                                                        key={variant.id}
-                                                        keywords={[variant.name]}
-                                                        onSelect={() => {
-                                                            form.setValue("variant_id", variant.id, { shouldValidate: true })
-                                                            setOpenVariantCombobox(false)
-                                                        }}
-                                                    >
-                                                        <Check
-                                                            className={cn(
-                                                                "mr-2 h-4 w-4",
-                                                                variant.id === field.value
-                                                                    ? "opacity-100"
-                                                                    : "opacity-0"
-                                                            )}
-                                                        />
-                                                        <div className="flex flex-col">
-                                                            <span>{variant.name}</span>
-                                                            {(variant.type) && (
-                                                                <span className="text-xs text-muted-foreground">
-                                                                    {variant.type}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </CommandItem>
-                                                ))}
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-
-                            </Popover>
+                            <FormControl>
+                                <ResponsiveCombobox
+                                    items={filteredVariants.map(v => ({ value: v.id, label: v.name, keywords: [v.name], type: v.type }))}
+                                    selectedValue={field.value}
+                                    onSelect={(value) => {
+                                        field.onChange(value)
+                                    }}
+                                    placeholder="商品名を選択"
+                                    searchPlaceholder="商品名を検索..."
+                                    label="商品名を選択"
+                                    disabled={!selectedBrandId}
+                                    open={openVariantCombobox}
+                                    onOpenChange={setOpenVariantCombobox}
+                                    renderItem={(item, isSelected) => (
+                                        <>
+                                            <Check
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    isSelected ? "opacity-100" : "opacity-0"
+                                                )}
+                                            />
+                                            <div className="flex flex-col">
+                                                <span>{item.label}</span>
+                                                {((item as any).type) && (
+                                                    <span className="text-xs text-muted-foreground">
+                                                        {(item as any).type}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                    emptyContent={
+                                        <div className="py-2 text-center text-sm">
+                                            <p className="mb-2">見つかりません</p>
+                                        </div>
+                                    }
+                                />
+                            </FormControl>
                             <FormDescription>
                                 該当する商品名がない場合は、銘柄選択に戻って「新規登録」を行ってください。
                             </FormDescription>
@@ -314,9 +253,6 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     render={({ field }) => {
                         // Determine if we should show custom input
                         const isKnownType = availableTypes.includes(field.value || "")
-                        // If value exists but not known, it's custom. 
-                        // If value is empty, it depends on user interaction (handled by local state if needed, but let's try to derive or use a simple toggle).
-                        // Actually, using a simple state for "is entering custom" is better.
 
                         // Select value logic:
                         // 1. If explicitly in custom mode ("Other" selected) OR value is present but not in list -> "OTHER"
@@ -324,37 +260,32 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                         // 3. Else (empty/initial) -> undefined (Placeholder)
                         const selectValue = (isCustomType || (!!field.value && !isKnownType))
                             ? "OTHER"
-                            : (isKnownType ? field.value : undefined)
+                            : (isKnownType ? field.value : null)
 
                         return (
                             <FormItem>
                                 <FormLabel>種類・製法</FormLabel>
                                 <div className="flex gap-2">
-                                    <Select
-                                        value={selectValue}
-                                        onValueChange={(value) => {
-                                            if (value === "OTHER") {
-                                                setIsCustomType(true)
-                                            } else {
-                                                field.onChange(value)
-                                                setIsCustomType(false)
-                                            }
-                                        }}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger className="w-[160px]">
-                                                <SelectValue placeholder="種類を選択" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {availableTypes.map((t) => (
-                                                <SelectItem key={t} value={t}>
-                                                    {t}
-                                                </SelectItem>
-                                            ))}
-                                            <SelectItem value="OTHER">その他</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <div className="w-[160px]">
+                                        <ResponsiveCombobox
+                                            items={[
+                                                ...availableTypes.map(t => ({ value: t, label: t })),
+                                                { value: "OTHER", label: "その他" }
+                                            ]}
+                                            selectedValue={selectValue}
+                                            onSelect={(value) => {
+                                                if (value === "OTHER") {
+                                                    setIsCustomType(true)
+                                                } else {
+                                                    field.onChange(value)
+                                                    setIsCustomType(false)
+                                                }
+                                            }}
+                                            placeholder="種類を選択"
+                                            searchPlaceholder="種類を検索..."
+                                            label="種類・製法を選択"
+                                        />
+                                    </div>
 
                                     {/* Show Input if "OTHER" is selected or value is unknown (custom) */}
                                     {(isCustomType || (!isKnownType && !!field.value)) && (
@@ -380,7 +311,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     }}
                 />
 
-                <div className="flex gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-4">
                     <FormField
                         control={form.control}
                         name="drank_on"
@@ -394,7 +325,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                                                 variant={"outline"}
                                                 disabled={form.watch("date_unknown")}
                                                 className={cn(
-                                                    "w-[240px] pl-3 text-left font-normal",
+                                                    "w-full sm:w-[240px] pl-3 text-left font-normal",
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
@@ -428,7 +359,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                         control={form.control}
                         name="date_unknown"
                         render={({ field }) => (
-                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 pt-9">
+                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 sm:pt-9">
                                 <FormControl>
                                     <Checkbox
                                         checked={field.value}
@@ -457,18 +388,18 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>評価 (1〜10)</FormLabel>
-                            <Select onValueChange={(val) => field.onChange(parseInt(val))} defaultValue={field.value.toString()}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="点数" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                                        <SelectItem key={num} value={num.toString()}>{num}点</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <FormControl>
+                                <ResponsiveCombobox
+                                    items={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => ({ value: num.toString(), label: `${num}点` }))}
+                                    selectedValue={field.value.toString()}
+                                    onSelect={(value) => {
+                                        if (value) field.onChange(parseInt(value))
+                                    }}
+                                    placeholder="点数"
+                                    label="評価を選択"
+                                    hideSearch={true}
+                                />
+                            </FormControl>
                             <FormDescription>
                                 10点満点で評価してください。
                             </FormDescription>

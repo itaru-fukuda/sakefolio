@@ -63,8 +63,10 @@ export default async function SearchPage({
             <div className="mb-10 text-center">
                 <h1 className="text-3xl font-bold font-serif mb-4">日本酒データベース検索</h1>
                 <p className="text-muted-foreground">
-                    全国の銘柄・酒蔵から、あなた好みの日本酒を探しましょう。<br />
-                    気になったお酒は、その場で「飲みたいリスト」に登録できます。
+                    全国の銘柄・酒蔵から、<br className="md:hidden" />
+                    あなた好みの日本酒を探しましょう。<br />
+                    気になったお酒は、その場で<br className="md:hidden" />
+                    「飲みたいリスト」に登録できます。
                 </p>
             </div>
 
