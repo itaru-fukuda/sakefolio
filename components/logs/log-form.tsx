@@ -260,7 +260,7 @@ export function LogForm({ variants, defaultVariantId }: LogFormProps) {
                         // 3. Else (empty/initial) -> undefined (Placeholder)
                         const selectValue = (isCustomType || (!!field.value && !isKnownType))
                             ? "OTHER"
-                            : (isKnownType ? field.value : null)
+                            : (isKnownType ? (field.value ?? null) : null)
 
                         return (
                             <FormItem>
