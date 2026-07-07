@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     startupImage: ["/images/pwa/apple-icon.png"],
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sakefolio.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sakefolio.rasu.jp"),
   title: {
     default: "SAKEfolio - 日本酒記録・評価アプリ",
     template: "%s | SAKEfolio",
